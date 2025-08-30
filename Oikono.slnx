@@ -1,0 +1,25 @@
+﻿<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose.local.yml" />
+    <File Path=".env" />
+    <File Path="README.md" />
+    <File Path="docker-compose.network.yml" />
+    <File Path="docker-compose.pi.yml" />
+    <File Path=".gitignore" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src\Oikono.Api\Oikono.Api.csproj" Type="Classic C#" />
+    <Project Path="src\Oikono.Application\Oikono.Application.csproj" Type="Classic C#" />
+    <Project Path="src\Oikono.Domain\Oikono.Domain.csproj" Type="Classic C#" />
+    <Project Path="src\Oikono.Infrastructure\Oikono.Infrastructure.csproj" Type="Classic C#" />
+    <Project Path="src\Oikono.LoadBalancer\Oikono.LoadBalancer.csproj" Type="Classic C#" />
+    <Project Path="src\SourceGenerators\SourceGenerators.Tests\SourceGenerators.Tests.csproj" Type="Classic C#" />
+    <Project Path="src\SourceGenerators\SourceGenerators\SourceGenerators.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test\Oikono.Api.UnitTests\Oikono.Api.UnitTests.csproj" Type="Classic C#" />
+    <Project Path="test\Oikono.Application.UnitTests\Oikono.Application.UnitTests.csproj" Type="Classic C#" />
+    <Project Path="test\Oikono.Infrastructure.UnitTests\Oikono.Infrastructure.UnitTests.csproj" Type="Classic C#" />
+    <Project Path="test\Oikono.UnitTests.Rules\Oikono.UnitTests.Rules.csproj" Type="Classic C#" />
+  </Folder>
+</Solution>
