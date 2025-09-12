@@ -9,28 +9,18 @@ public class PartIngredientConfiguration : BaseConfiguration<PartIngredient, Par
 {
     public override void ConfigureEntity(EntityTypeBuilder<PartIngredient> builder)
     {
-        builder.Property(pi => pi.PartId)
-            .HasConversion(
-                id => id.Value,
-                value => new PartId(value));
-
-        builder.Property(pi => pi.IngredientId)
-            .HasConversion(
-                id => id.Value,
-                value => new IngredientId(value));
-
         builder.Property(pi => pi.Amount)
             .IsRequired();
 
         builder.Property(pi => pi.Unit)
             .HasMaxLength(20);
 
-        builder.HasOne(pi => pi.Part)
-            .WithMany()
-            .HasForeignKey(pi => pi.PartId);
-
-        builder.HasOne(pi => pi.Ingredient)
-            .WithMany()
-            .HasForeignKey(pi => pi.IngredientId);
+        builder
+            .HasOne(pi => pi.Part)
+            .WithMany();
+        
+        builder
+            .HasOne(pi => pi.Ingredient)
+            .WithMany();
     }
 }

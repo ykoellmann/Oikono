@@ -99,6 +99,15 @@ public static class DependencyInjection
 
     private static void AddSecurity(this IServiceCollection services)
     {
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         services.AddScoped<IAuthorizationService, AuthorizationService>();
         services.AddScoped<IPolicyEnforcer, PolicyEnforcer>();
         services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();

@@ -18,9 +18,6 @@ public class RecipeRequest
     // "asc" oder "desc"
     public string SortOrder { get; init; } = "desc";
 
-    // Mehrfach im Query: &status=open&status=closed
-    public string[]? Status { get; init; }
-
     public DateTime? DateFrom { get; init; }
     public DateTime? DateTo { get; init; }
 }

@@ -40,11 +40,14 @@ public class RecipeRepository : Repository<Recipe, RecipeId>, IRecipeRepository
         if (!string.IsNullOrWhiteSpace(filter.SortBy))
         {
             var prop = filter.SortBy;
-            var asc  = filter.SortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase);
+            var asc  = filter.SortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase);var recipeType = typeof(Recipe);
+            var actualProp = recipeType.GetProperties()
+                .FirstOrDefault(p => p.Name.Equals(prop, StringComparison.OrdinalIgnoreCase));
+
             if (asc)
-                query = query.OrderBy(r => EF.Property<object>(r, prop));
+                query = query.OrderBy(r => EF.Property<Recipe>(r, actualProp.Name));
             else
-                query = query.OrderByDescending(r => EF.Property<object>(r, prop));
+                query = query.OrderByDescending(r => EF.Property<Recipe>(r, actualProp.Name));
         }
         else
         {

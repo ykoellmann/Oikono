@@ -10,7 +10,6 @@ public record GetRecipesQuery(
     string? Search,
     string? SortBy,
     string SortOrder,
-    string[]? Status,
     DateTime? DateFrom,
     DateTime? DateTo
 ) : IQuery<PagedResult<RecipeResult>>;

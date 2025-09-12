@@ -14,7 +14,18 @@ public class RecipeMapping : IRegister
         config.NewConfig<RecipeRequest, GetRecipesQuery>()
             .MapToConstructor(true);
         
-        config.NewConfig<PagedResult<Recipe>, PagedResult<RecipeResult>>()
+        config.NewConfig(typeof(PagedResult<>), typeof(PagedResult<>))
+            .Map("Items", "Items")
             .MapToConstructor(true);
+
+        config.NewConfig<Recipe, RecipeResult>()
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.Portions, src => src.Portions)
+            .Map(dest => dest.Calories, src => src.Calories)
+            .Map(dest => dest.Rating, src => src.Rating)
+            .Map(dest => dest.Tags, src => src.Tags);
+
+        config.NewConfig<Tag, TagResult>()
+            .Map(dest => dest.Name, src => src.Name);
     }
 }

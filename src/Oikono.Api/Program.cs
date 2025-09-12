@@ -23,6 +23,8 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
+    app.UseCors();
+
     app.UseExceptionHandler("/error");
 
     app.UseHttpsRedirection();
