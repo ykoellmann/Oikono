@@ -5,11 +5,11 @@ namespace Oikono.Domain.Assets;
 
 public class Asset : AggregateRoot<AssetId>
 {
-    public Asset(string fileName, string contentType, byte[] content)
+    public Asset(string fileName, string contentType, byte[] data)
     {
         FileName = fileName;
         ContentType = contentType;
-        Data = content;
+        Data = data;
     }
     
     public string  FileName     { get; private set; } = null!;

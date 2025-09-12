@@ -13,7 +13,7 @@ public class RecipeRepository : Repository<Recipe, RecipeId>, IRecipeRepository
 {
     private readonly OikonoDbContext _dbContext;
 
-    protected RecipeRepository(OikonoDbContext dbContext) : base(dbContext)
+    public RecipeRepository(OikonoDbContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
     }

@@ -8,7 +8,7 @@ public class AssetRepository : Repository<Asset, AssetId>, IAssetRepository
 {
     private readonly OikonoDbContext _dbContext;
 
-    protected AssetRepository(OikonoDbContext dbContext) : base(dbContext)
+    public AssetRepository(OikonoDbContext dbContext) : base(dbContext)
     {
         _dbContext = dbContext;
     }

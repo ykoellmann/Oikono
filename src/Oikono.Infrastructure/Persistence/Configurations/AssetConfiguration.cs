@@ -9,8 +9,6 @@ public class AssetConfiguration : BaseConfiguration<Asset, AssetId>
 {
     public override void ConfigureEntity(EntityTypeBuilder<Asset> builder)
     {
-        builder.ToTable("Role");
-
         builder.Property(r => r.FileName)
             .IsRequired()
             .HasMaxLength(256);
