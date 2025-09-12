@@ -1,6 +1,6 @@
 using ErrorOr;
 
-namespace Oikono.Domain.Users.Errors;
+namespace Oikono.Domain.Errors;
 
 public static partial class Errors
 {

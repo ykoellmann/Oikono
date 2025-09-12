@@ -4,6 +4,8 @@ using Oikono.Domain.Users;
 using Oikono.Domain.Users.ValueObjects;
 using Oikono.Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
+using Oikono.Domain.Assets;
+using Oikono.Domain.Recipes;
 
 namespace Oikono.Infrastructure.Persistence;
 
@@ -27,6 +29,21 @@ public class OikonoDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
 
     public DbSet<Idempotency> Idempotencies { get; set; } = null!;
+
+    public DbSet<Asset> Assets { get; set; } = null!;
+
+    public DbSet<Recipe> Recipes { get; set; } = null!;
+    public DbSet<RecipeAsset> RecipeAssets { get; set; } = null!;
+
+    public DbSet<Part> Parts { get; set; } = null!;
+    public DbSet<Step> Steps { get; set; } = null!;
+    public DbSet<Tag> Tags { get; set; } = null!;
+    public DbSet<SideDish> SideDishes { get; set; } = null!;
+    public DbSet<Device> Devices { get; set; } = null!;
+    public DbSet<Ingredient> Ingredients { get; set; } = null!;
+    public DbSet<PartIngredient> PartIngredients { get; set; } = null!;
+    public DbSet<RecipeSideDish> RecipeSideDishes { get; set; } = null!;
+    public DbSet<RecipeTag> RecipeTags { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

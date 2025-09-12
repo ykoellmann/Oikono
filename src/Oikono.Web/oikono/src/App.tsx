@@ -1,21 +1,19 @@
 import './App.css'
-import PageLayout from "@/components/page-layout.tsx";
-import { Route, Routes, Navigate } from 'react-router-dom'
-import HomePage from '@/pages/home.tsx'
-import RecipesPage from '@/pages/recipes/index.tsx'
-import NotFoundPage from '@/pages/not-found.tsx'
+import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
+import HomePage from "@/pages/home.tsx";
+import RecipesPage from "@/pages/recipes";
+import NotFoundPage from "@/pages/not-found.tsx";
+import RecipeDetailPage from "@/pages/recipes/detail.tsx";
 
-function App() {
-  return (
-    <Routes>
-      <Route element={<PageLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="recipes" element={<RecipesPage />} />
-        <Route path="/home" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
-  )
+// eslint-disable-next-line react-refresh/only-export-components
+export const router = createBrowserRouter([
+    { index: true, element: <HomePage /> },
+    { path: "recipes", element: <RecipesPage /> },
+    { path: "recipes/:id", element: <RecipeDetailPage /> },
+    { path: "/home", element: <Navigate to="/" replace /> },
+    { path: "*", element: <NotFoundPage /> },
+]);
+
+export default function App() {
+    return <RouterProvider router={router} />
 }
-
-export default App

@@ -5,7 +5,7 @@ using Oikono.Domain.Common.Specification;
 using Oikono.Domain.Users;
 using Oikono.Domain.Users.ValueObjects;
 using Microsoft.AspNetCore.Http;
-using Errors = Oikono.Domain.Users.Errors.Errors;
+using Errors = Oikono.Domain.Errors.Errors;
 
 namespace Oikono.Application.UnitTests.Authentication.Commands;
 

@@ -26,7 +26,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { useLocation } from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
 const data = {
   user: {
@@ -172,10 +172,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-2 px-2 py-1 font-semibold">
-              <House className="h-5 w-5" />
-              <span>Oikono</span>
-            </div>
+            <Link to={"/"}>
+              <div className="flex items-center gap-2 px-2 py-1 font-semibold">
+                <House className="h-5 w-5" />
+                <span>Oikono</span>
+              </div>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

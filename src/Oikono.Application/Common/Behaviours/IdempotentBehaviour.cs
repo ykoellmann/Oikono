@@ -3,10 +3,10 @@ using Oikono.Application.Common.Interfaces.Persistence;
 using Oikono.Application.Common.Interfaces.Security;
 using Oikono.Domain.Idempotencies;
 using Oikono.Domain.Idempotencies.ValueObjects;
-using Oikono.Domain.Users.Errors;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Oikono.Domain.Errors;
 
 namespace Oikono.Application.Common.Behaviours;
 

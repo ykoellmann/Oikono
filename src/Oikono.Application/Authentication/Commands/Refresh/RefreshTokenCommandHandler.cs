@@ -5,7 +5,7 @@ using Oikono.Application.Common.Interfaces.Security;
 using Oikono.Domain.Users;
 using Oikono.Domain.Users.Specifications;
 using ErrorOr;
-using Errors = Oikono.Domain.Users.Errors.Errors;
+using Errors = Oikono.Domain.Errors.Errors;
 
 namespace Oikono.Application.Authentication.Commands.Refresh;
 

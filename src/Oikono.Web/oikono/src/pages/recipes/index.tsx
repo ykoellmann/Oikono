@@ -1,32 +1,51 @@
-import { RecipesGrid } from "@/pages/recipes/recipe-grid.tsx"
-import type { Recipe } from "@/pages/recipes/lib/recipe.ts"
-
-const sampleRecipes: Recipe[] = [
-  {
-    id: "1",
-    name: "Spaghetti Bolognese",
-    images: ["https://picsum.photos/seed/bolo/400/240"],
-    ingredients: [],
-    steps: [],
-    tags: ["pasta", "klassiker"],
-    portions: 2,
-  },
-  {
-    id: "2",
-    name: "Gemüsepfanne",
-    images: ["https://picsum.photos/seed/veggie/400/240"],
-    ingredients: [],
-    steps: [],
-    tags: ["veggie", "schnell"],
-    portions: 2,
-  },
-]
+import * as React from "react";
+import { RecipesGrid } from "@/pages/recipes/recipe-grid.tsx";
+import PageLayout from "@/components/page-layout.tsx";
+import { RecipeService } from "@/pages/recipes/lib/recipeService";
+import { useSearchParams } from "react-router-dom";
+import type { Recipe } from "@/pages/recipes/lib/recipe";
 
 export default function RecipesPage() {
+  const [searchParams] = useSearchParams();
+  const page = Number.parseInt(searchParams.get("page") ?? "1", 10) || 1;
+  const pageSize = 8; // default page size for grid
+
+  const [state, setState] = React.useState<{ items: Recipe[]; total: number; loading: boolean; error: string | null }>({
+    items: [],
+    total: 0,
+    loading: true,
+    error: null,
+  });
+
+  React.useEffect(() => {
+    let isActive = true;
+    setState((s) => ({ ...s, loading: true, error: null }));
+    RecipeService.list({ page, pageSize })
+      .then((res) => {
+        if (!isActive) return;
+        setState({ items: res.items, total: res.total, loading: false, error: null });
+      })
+      .catch((err) => {
+        if (!isActive) return;
+        setState((s) => ({ ...s, loading: false, error: err?.message ?? "Fehler beim Laden" }));
+      });
+    return () => { isActive = false; };
+  }, [page]);
+
   return (
-    <div className="p-0">
-      <h1 className="text-2xl font-semibold mb-2">Rezepte</h1>
-      <RecipesGrid recipes={sampleRecipes} />
-    </div>
-  )
+    <PageLayout title="Rezepte" >
+      {state.loading && <div className="text-sm text-muted-foreground">Lade Rezepte…</div>}
+      {state.error && !state.loading && (
+        <div className="text-sm text-red-600">{state.error}</div>
+      )}
+      {!state.loading && !state.error && (
+        <RecipesGrid
+          recipes={state.items}
+          page={page}
+          pageSize={pageSize}
+          total={state.total}
+        />
+      )}
+    </PageLayout>
+  );
 }

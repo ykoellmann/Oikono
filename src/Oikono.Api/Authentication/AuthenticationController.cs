@@ -13,7 +13,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Errors = Oikono.Domain.Users.Errors.Errors;
+using Errors = Oikono.Domain.Errors.Errors;
 
 namespace Oikono.Api.Authentication;
 

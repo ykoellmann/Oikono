@@ -2,7 +2,6 @@ import * as React from "react"
 import {
     Pagination,
     PaginationContent,
-    PaginationEllipsis,
     PaginationItem,
     PaginationLink,
     PaginationNext,
@@ -10,32 +9,54 @@ import {
 } from "@/components/ui/pagination"
 import type {Recipe} from "@/pages/recipes/lib/recipe.ts";
 import {RecipeCard} from "@/pages/recipes/recipe-card.tsx";
+import {useSearchParams} from "react-router-dom";
 
 type RecipesGridProps = {
     recipes: Recipe[]
-    itemsPerPage?: number
+    page: number
+    pageSize: number
+    total: number
 }
+export function RecipesGrid({ recipes, page, pageSize, total }: RecipesGridProps) {
+    const [searchParams, setSearchParams] = useSearchParams();
 
-export function RecipesGrid({ recipes, itemsPerPage = 8 }: RecipesGridProps) {
-    const [page, setPage] = React.useState(1)
+    const rawPage = Number.parseInt(searchParams.get("page") ?? String(page), 10) || page;
 
-    const totalPages = Math.ceil(recipes.length / itemsPerPage)
+    const totalPages = Math.ceil(total / Math.max(1, pageSize));
+    const maxPage = Math.max(1, totalPages); // vermeidet 0, wenn keine Rezepte
 
-    const paginatedRecipes = React.useMemo(() => {
-        const start = (page - 1) * itemsPerPage
-        return recipes.slice(start, start + itemsPerPage)
-    }, [page, recipes, itemsPerPage])
+    const currentPage = Math.min(Math.max(1, rawPage), maxPage);
+
+    React.useEffect(() => {
+        if (!searchParams.get("page")) {
+            setSearchParams(prev => {
+                const next = new URLSearchParams(prev);
+                next.set("page", "1");
+                return next;
+            }, { replace: true });
+        }
+    }, [searchParams, setSearchParams]);
+
+    const goToPage = (p: number) => {
+        const nextPage = Math.min(Math.max(1, p), maxPage);
+        setSearchParams(prev => {
+            const next = new URLSearchParams(prev);
+            next.set("page", String(nextPage));
+            return next;
+        });
+    };
+
+    const paginatedRecipes = recipes;
+
 
     return (
         <div className="space-y-6">
-            {/* Grid */}
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {paginatedRecipes.map((recipe) => (
                     <RecipeCard key={recipe.id} recipe={recipe} />
                 ))}
             </div>
 
-            {/* Pagination */}
             {totalPages > 1 && (
                 <Pagination>
                     <PaginationContent>
@@ -44,19 +65,19 @@ export function RecipesGrid({ recipes, itemsPerPage = 8 }: RecipesGridProps) {
                                 href="#"
                                 onClick={(e) => {
                                     e.preventDefault()
-                                    setPage((p) => Math.max(1, p - 1))
+                                    goToPage(Math.max(1, currentPage - 1))
                                 }}
                             />
                         </PaginationItem>
 
                         {Array.from({ length: totalPages }).map((_, i) => (
-                            <PaginationItem key={i}>
+                            <PaginationItem key={`page-${i + 1}`}>
                                 <PaginationLink
                                     href="#"
-                                    isActive={page === i + 1}
+                                    isActive={currentPage === i + 1}
                                     onClick={(e) => {
                                         e.preventDefault()
-                                        setPage(i + 1)
+                                        goToPage(i + 1)
                                     }}
                                 >
                                     {i + 1}
@@ -64,14 +85,12 @@ export function RecipesGrid({ recipes, itemsPerPage = 8 }: RecipesGridProps) {
                             </PaginationItem>
                         ))}
 
-                        {totalPages > 5 && <PaginationEllipsis />}
-
                         <PaginationItem>
                             <PaginationNext
                                 href="#"
                                 onClick={(e) => {
                                     e.preventDefault()
-                                    setPage((p) => Math.min(totalPages, p + 1))
+                                    goToPage(Math.min(totalPages, currentPage + 1))
                                 }}
                             />
                         </PaginationItem>
