@@ -33,7 +33,7 @@ export type RecipeStep = {
 }
 
 export type IngredientPart = {
-    name: string
+    name: string | null
     ingredients: Ingredient[]
 }
 

@@ -12,8 +12,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://*:80
-      - ConnectionStrings__DbConnection=User Id=postgres;Password=postgres;Server=applepi-db;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;
-      - ConnectionStrings__Redis=redis-stack:6379
+      - ConnectionStrings__DbConnection=User Id=postgres;Password=postgres;Server=postgres;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;
+      - ConnectionStrings__Redis=redis:6379
       - JwtSettings__Secret=0ba697edfae041c1c756547c88f737db379231f94cf1f89092698877d87e54a2
       - JwtSettings__ExpiryMinutes=10
       - JwtSettings__Issuer=Oikono

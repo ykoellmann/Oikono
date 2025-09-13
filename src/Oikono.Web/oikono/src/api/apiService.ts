@@ -9,7 +9,7 @@ import axios, {
 import { v4 as uuidv4 } from "uuid";
 
 const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string) || "http://192.168.178.31:8100/api/";
+  (import.meta.env.VITE_API_BASE_URL as string) || "/api/";
 
 // Optional: wenn du Cookies brauchst (CORS + Cookies)
 // const WITH_CREDENTIALS = Boolean(import.meta.env.VITE_API_WITH_CREDENTIALS);

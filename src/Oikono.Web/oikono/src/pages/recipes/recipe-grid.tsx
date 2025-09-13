@@ -46,7 +46,7 @@ export function RecipesGrid({ recipes, page, pageSize, total }: RecipesGridProps
         });
     };
 
-    const paginatedRecipes = recipes;
+    const paginatedRecipes = recipes ?? [];
 
 
     return (

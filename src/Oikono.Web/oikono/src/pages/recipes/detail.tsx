@@ -87,6 +87,7 @@ export default function RecipeDetailPage() {
         );
     }
 
+    // @ts-ignore
     return (
         <PageLayout title={recipe.name}>
             {/* Rating with utensils (integer only) */}
