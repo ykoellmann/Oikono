@@ -41,7 +41,7 @@ services:
       - backend
     restart: unless-stopped
     volumes:
-      - logdata:/var/logs 
+      - logdata:/var/logs
 #  oikono.api.blue:
 #    container_name: oikono.api.blue
 #    image: oikono.api
