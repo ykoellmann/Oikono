@@ -7,7 +7,6 @@
     <File Path="docker-compose.api.yml" />
     <File Path=".gitignore" />
     <File Path=".github\workflows\deploy.yml" />
-    <File Path="docker-compose.web.yml" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src\Oikono.Api\Oikono.Api.csproj" Type="Classic C#" />

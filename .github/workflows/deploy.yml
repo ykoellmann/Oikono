@@ -48,5 +48,5 @@ jobs:
         run: |
           docker-compose -f docker-compose.api.yml pull
           docker-compose -f docker-compose.api.yml up -d
-          docker-compose -f docker-compose.web.yml pull
-          docker-compose -f docker-compose.web.yml up -d
+          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml pull
+          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d
