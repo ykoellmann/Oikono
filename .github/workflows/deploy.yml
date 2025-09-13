@@ -41,7 +41,7 @@ jobs:
           docker build build --no-cache \
             -f src/Oikono.Web/oikono/Dockerfile \
             -t ghcr.io/ykoellmann/oikono.web:arm64 \
-            --push .
+          docker push ghcr.io/ykoellmann/oikono.web:arm64
 
       # Deploy auf Pi
       - name: Pull & Start containers
