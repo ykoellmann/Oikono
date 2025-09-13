@@ -24,21 +24,21 @@ jobs:
       # Build API image
       - name: Build API
         run: |
-          docker build --platform linux/arm64 --no-cache -f src/Oikono.Api/Dockerfile \
+          docker build --platform linux/arm64 -f src/Oikono.Api/Dockerfile \
             -t ghcr.io/ykoellmann/oikono.api:arm64 .
           docker push ghcr.io/ykoellmann/oikono.api:arm64
 
       # Build Loadbalancer image
       - name: Build Loadbalancer
         run: |
-          docker build --platform linux/arm64 --no-cache -f src/Oikono.LoadBalancer/Dockerfile \
+          docker build --platform linux/arm64 -f src/Oikono.LoadBalancer/Dockerfile \
             -t ghcr.io/ykoellmann/oikono.loadbalancer:arm64 .
           docker push ghcr.io/ykoellmann/oikono.loadbalancer:arm64
 
       # Build Frontend image
       - name: Build & Push Frontend
         run: |
-          docker build --no-cache \
+          docker build \
             -f src/Oikono.Web/oikono/Dockerfile \
             -t ghcr.io/ykoellmann/oikono.web:arm64 src/Oikono.Web/oikono
           docker push ghcr.io/ykoellmann/oikono.web:arm64
