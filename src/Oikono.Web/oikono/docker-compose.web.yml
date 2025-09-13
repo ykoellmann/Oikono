@@ -1,8 +1,9 @@
 version: "3.8"
 
 networks:
-  oikono-backend:
-    name: oikono-backend
+  oikono:
+    name: oikono
+    external: true
 
 services:
   oikono.web:
@@ -15,4 +16,4 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - oikono-backend
+      - oikono
