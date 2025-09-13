@@ -38,7 +38,7 @@ jobs:
       # Build Frontend image
       - name: Build & Push Frontend
         run: |
-          docker build build --no-cache \
+          docker build --no-cache \
             -f src/Oikono.Web/oikono/Dockerfile \
             -t ghcr.io/ykoellmann/oikono.web:arm64 \
           docker push ghcr.io/ykoellmann/oikono.web:arm64
