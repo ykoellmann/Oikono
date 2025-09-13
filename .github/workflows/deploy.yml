@@ -40,7 +40,7 @@ jobs:
         run: |
           docker build --no-cache \
             -f src/Oikono.Web/oikono/Dockerfile \
-            -t ghcr.io/ykoellmann/oikono.web:arm64 .
+            -t ghcr.io/ykoellmann/oikono.web:arm64 src/Oikono.Web/oikono
           docker push ghcr.io/ykoellmann/oikono.web:arm64
 
       # Deploy auf Pi
