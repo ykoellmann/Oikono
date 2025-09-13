@@ -36,11 +36,12 @@ jobs:
           docker push ghcr.io/ykoellmann/oikono.loadbalancer:arm64
 
       # Build Frontend image
-      - name: Build Frontend
+      - name: Build & Push Frontend
         run: |
-          docker build -f Dockerfile \
-            -t ghcr.io/ykoellmann/oikono.web:arm64 .
-          docker push ghcr.io/ykoellmann/oikono.web:arm64
+          docker buildx build --platform linux/arm64 --no-cache \
+            -f src/Oikono.Web/oikono/Dockerfile \
+            -t ghcr.io/ykoellmann/oikono.web:arm64 \
+            --push .
 
       # Deploy auf Pi
       - name: Pull & Start containers
