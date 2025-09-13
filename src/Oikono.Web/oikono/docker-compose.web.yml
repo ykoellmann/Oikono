@@ -13,7 +13,7 @@ services:
     container_name: oikono.web
     build:
       context: .
-      dockerfile: /Dockerfile
+      dockerfile: Dockerfile
     image: oikono.web
     restart: always
     ports:
