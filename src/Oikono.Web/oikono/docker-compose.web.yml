@@ -4,6 +4,9 @@ networks:
   oikono:
     name: oikono
     external: true
+  backend:
+    name: backend
+    external: true
 
 services:
   oikono.web:
