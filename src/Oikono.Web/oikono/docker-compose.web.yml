@@ -8,12 +8,10 @@ services:
   oikono.web:
     container_name: oikono.web
     build:
-      context: ../../..
+      context: .
       dockerfile: /Dockerfile
     image: oikono.web
     restart: always
-    environment:
-      - VITE_API_BASE_URL=http://pi.local:8100/api/
     ports:
       - "3000:3000"
     networks:
