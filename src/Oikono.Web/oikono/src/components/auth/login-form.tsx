@@ -55,7 +55,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
       <div className="grid gap-6">
         <div className="grid gap-3">
           <FormLabel className="text-left" htmlFor="email" invalid={!!form.formState.errors.email}>Email</FormLabel>
-          <Input id="email" name="email" type="email" placeholder="m@example.com" autoComplete="email" {...form.register("email")} />
+          <Input id="email" type="email" placeholder="m@example.com" autoComplete="email" {...form.register("email")} />
           <FormMessage className="text-left">{form.formState.errors.email?.message as string}</FormMessage>
         </div>
         <div className="grid gap-3">
@@ -65,7 +65,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
               Forgot your password?
             </a>
           </div>
-          <Input id="password" name="password" type="password" autoComplete="current-password" {...form.register("password")} />
+          <Input id="password" type="password" autoComplete="current-password" {...form.register("password")} />
           <FormMessage className="text-left">{form.formState.errors.password?.message as string}</FormMessage>
         </div>
         {error && <div className="text-red-600 text-sm">{error}</div>}
