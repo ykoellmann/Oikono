@@ -32,10 +32,9 @@ jobs:
       - name: Build Frontend
         run: |
           docker build \
-            -f Dockerfile \
+            -f src/Oikono.Web/oikono/Dockerfile \
             -t oikono.web:local \
             src/Oikono.Web/oikono
-
       # Deploy auf Pi
       - name: Start containers
         run: |
