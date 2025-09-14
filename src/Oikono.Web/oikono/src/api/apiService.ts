@@ -34,6 +34,13 @@ function setHeader(headers: AxiosHeaders | Record<string, unknown> | undefined, 
 }
 
 class ApiService {
+  public setAuthToken(token?: string) {
+    if (token) {
+      this.client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete this.client.defaults.headers.common["Authorization"];
+    }
+  }
   private client: AxiosInstance;
   private refreshClient: AxiosInstance;
 
@@ -76,6 +83,9 @@ class ApiService {
   }
 
   private handleRequest(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
+    // Always attach a request id for backend validation
+    setHeader(config.headers, "X-Request-Id", uuidv4());
+
     // JWT anhängen
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -133,11 +143,15 @@ class ApiService {
     try {
       // Backend: reads httpOnly refresh cookie; no body needed
       const { data } = await this.refreshClient.post<{ accessToken: string }>(
-        "/authentication/token/refresh"
+        "/authentication/token/refresh",
+        undefined,
+        { headers: { "X-Request-Id": uuidv4() } }
       );
 
       const newAccessToken = data.accessToken;
       localStorage.setItem("access_token", newAccessToken);
+      // update default header immediately
+      this.client.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
 
       // Alle wartenden Requests fortsetzen
       this.refreshQueue.forEach((cb) => cb(newAccessToken));
@@ -146,6 +160,12 @@ class ApiService {
 
       return newAccessToken;
     } catch (err) {
+      // Prüfe ProblemDetails-Titel und erzwinge Logout bei ungültigem/abgelaufenem Refresh Token
+      const maybeAxios = err as AxiosError<{ title?: string }>;
+      const title = maybeAxios?.response?.data?.title;
+      if (title === "Authentication.InvalidRefreshToken" || title === "Authentication.RefreshTokenExpired") {
+        this.forceLogout();
+      }
       // Alle wartenden Requests ablehnen
       this.refreshRejectQueue.forEach((rej) => rej(err));
       this.refreshQueue = [];

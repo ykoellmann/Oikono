@@ -9,7 +9,7 @@ public class RefreshToken : Entity<RefreshTokenId>
     public RefreshToken(UserId userId)
     {
         Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-        Expires = DateTime.UtcNow.AddMinutes(10);
+        Expires = DateTime.UtcNow.AddDays(3);
         UserId = userId;
     }
 

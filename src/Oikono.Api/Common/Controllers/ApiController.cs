@@ -47,7 +47,7 @@ public class ApiController : ControllerBase
             ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status500InternalServerError
         };
-        return Problem(statusCode: status, detail: error.Description);
+        return Problem(statusCode: status, title: error.Code, detail: error.Description);
     }
 
     private IActionResult ValidationProblem(List<Error> errors)

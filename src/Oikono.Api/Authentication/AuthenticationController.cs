@@ -60,6 +60,7 @@ public class AuthenticationController : ApiController
     }
 
     [HttpPost("token/refresh")]
+    [AllowAnonymous]
     public async Task<IActionResult> RefreshToken()
     {
         var tokenToRefresh = Request.Cookies["refreshToken"];
