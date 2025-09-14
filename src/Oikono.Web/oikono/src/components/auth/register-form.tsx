@@ -60,22 +60,22 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
       <div className="grid gap-6">
         <div className="grid gap-3">
           <FormLabel className="text-left" htmlFor="firstName" invalid={!!form.formState.errors.firstName}>First name</FormLabel>
-          <Input id="firstName" name="given-name" autoComplete="given-name" {...form.register("firstName")} />
+          <Input id="firstName" autoComplete="given-name" {...form.register("firstName")} />
           <FormMessage className="text-left">{form.formState.errors.firstName?.message as string}</FormMessage>
         </div>
         <div className="grid gap-3">
           <FormLabel className="text-left" htmlFor="lastName" invalid={!!form.formState.errors.lastName}>Last name</FormLabel>
-          <Input id="lastName" name="family-name" autoComplete="family-name" {...form.register("lastName")} />
+          <Input id="lastName" autoComplete="family-name" {...form.register("lastName")} />
           <FormMessage className="text-left">{form.formState.errors.lastName?.message as string}</FormMessage>
         </div>
         <div className="grid gap-3">
           <FormLabel className="text-left" htmlFor="email" invalid={!!form.formState.errors.email}>Email</FormLabel>
-          <Input id="email" name="email" type="email" placeholder="m@example.com" autoComplete="email" {...form.register("email")} />
+          <Input id="email" type="email" placeholder="m@example.com" autoComplete="email" {...form.register("email")} />
           <FormMessage className="text-left">{form.formState.errors.email?.message as string}</FormMessage>
         </div>
         <div className="grid gap-3">
           <FormLabel className="text-left" htmlFor="password" invalid={!!form.formState.errors.password}>Password</FormLabel>
-          <Input id="password" name="new-password" type="password" autoComplete="new-password" {...form.register("password")} />
+          <Input id="password" type="password" autoComplete="new-password" {...form.register("password")} />
           <FormMessage className="text-left">{form.formState.errors.password?.message as string}</FormMessage>
         </div>
         {error && <div className="text-red-600 text-sm">{error}</div>}
