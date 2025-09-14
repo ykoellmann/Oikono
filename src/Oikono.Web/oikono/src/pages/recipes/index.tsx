@@ -4,6 +4,7 @@ import PageLayout from "@/components/page-layout.tsx";
 import { RecipeService } from "@/pages/recipes/lib/recipeService";
 import { useSearchParams } from "react-router-dom";
 import type { Recipe } from "@/pages/recipes/lib/recipe";
+import {CirclePlus} from "lucide-react";
 
 export default function RecipesPage() {
   const [searchParams] = useSearchParams();
@@ -34,6 +35,9 @@ export default function RecipesPage() {
 
   return (
     <PageLayout title="Rezepte" >
+      <div className="flex">
+        <CirclePlus></CirclePlus>
+      </div>
       {state.loading && <div className="text-sm text-muted-foreground">Lade Rezepte…</div>}
       {state.error && !state.loading && (
         <div className="text-sm text-red-600">{state.error}</div>

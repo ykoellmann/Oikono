@@ -1,6 +1,6 @@
 ﻿networks:
-  oikono-backend:
-    name: oikono-backend
+  oikono:
+    name: oikono
 
 services:
   oikono.api.green:
@@ -37,7 +37,7 @@ services:
     ports:
       - 8100:80
     networks:
-      - oikono-backend
+      - oikono
     volumes:
       - logdata:/var/logs
 #  oikono.api.blue:
@@ -114,37 +114,37 @@ services:
 #      - backend
 #    volumes:
 #      - logdata:/var/logs
-  oikono.loadbalancer:
-    container_name: oikono.loadbalancer
-    image: oikono.loadbalancer
-    build:
-      context: .
-      dockerfile: src/oikono.LoadBalancer/Dockerfile
-    restart: always
-    ports:
-#      - "${ADDRESS}:8001:80"
-      - 8001:80
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://*:80
-      - ReverseProxy__Clusters__api__Destinations__green__Address=http://oikono.api.green:80
-#      - ReverseProxy__Clusters__api__Destinations__blue__Address=http://oikono.api.blue:80
-#      - ReverseProxy__Clusters__api__Destinations__white__Address=http://oikono.api.white:80
-      - ReverseProxy__Clusters__api__LoadBalancingPolicy=RoundRobin
-      - ReverseProxy__Routes__api__ClusterId=api
-      - ReverseProxy__Routes__api__Match__Path={**catch-all}
-      - ConnectionStrings__DbConnection=User Id=postgres;Password=postgres;Server=pi.local;Port=8002;Database=postgres;Integrated Security=true;Pooling=true;
-      - ConnectionStrings__Redis=pi.local:6379
-      - JwtSettings__Secret=0ba697edfae041c1c756547c88f737db379231f94cf1f89092698877d87e54a2
-      - JwtSettings__ExpiryMinutes=10
-      - JwtSettings__Issuer=Oikono
-      - JwtSettings__Audience=Oikono
-    depends_on:
-      - oikono.api.green
-#      - oikono.api.blue
-#      - oikono.api.white
-    networks:
-      - oikono-backend
+#  oikono.loadbalancer:
+#    container_name: oikono.loadbalancer
+#    image: oikono.loadbalancer
+#    build:
+#      context: .
+#      dockerfile: src/oikono.LoadBalancer/Dockerfile
+#    restart: always
+#    ports:
+##      - "${ADDRESS}:8001:80"
+#      - 8001:80
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - ASPNETCORE_URLS=http://*:80
+#      - ReverseProxy__Clusters__api__Destinations__green__Address=http://oikono.api.green:80
+##      - ReverseProxy__Clusters__api__Destinations__blue__Address=http://oikono.api.blue:80
+##      - ReverseProxy__Clusters__api__Destinations__white__Address=http://oikono.api.white:80
+#      - ReverseProxy__Clusters__api__LoadBalancingPolicy=RoundRobin
+#      - ReverseProxy__Routes__api__ClusterId=api
+#      - ReverseProxy__Routes__api__Match__Path={**catch-all}
+#      - ConnectionStrings__DbConnection=User Id=postgres;Password=postgres;Server=pi.local;Port=8002;Database=postgres;Integrated Security=true;Pooling=true;
+#      - ConnectionStrings__Redis=pi.local:6379
+#      - JwtSettings__Secret=0ba697edfae041c1c756547c88f737db379231f94cf1f89092698877d87e54a2
+#      - JwtSettings__ExpiryMinutes=10
+#      - JwtSettings__Issuer=Oikono
+#      - JwtSettings__Audience=Oikono
+#    depends_on:
+#      - oikono.api.green
+##      - oikono.api.blue
+##      - oikono.api.white
+#    networks:
+#      - oikono
 
 volumes:
   appdata:

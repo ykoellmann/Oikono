@@ -23,7 +23,10 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
-    app.UseCors();
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseCors("DevCors");
+    }
 
     app.UseExceptionHandler("/error");
 

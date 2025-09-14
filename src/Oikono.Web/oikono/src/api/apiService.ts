@@ -9,10 +9,9 @@ import axios, {
 import { v4 as uuidv4 } from "uuid";
 
 const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string) || "/api/";
+  (import.meta.env.VITE_API_BASE_URL as string) || "/api";
 
-// Optional: wenn du Cookies brauchst (CORS + Cookies)
-// const WITH_CREDENTIALS = Boolean(import.meta.env.VITE_API_WITH_CREDENTIALS);
+// Cookies needed for httpOnly refresh cookie
 
 type Method = "get" | "post" | "put" | "patch" | "delete" | "options" | "head";
 
@@ -46,7 +45,7 @@ class ApiService {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
-      // withCredentials: WITH_CREDENTIALS,
+      withCredentials: true,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -57,6 +56,7 @@ class ApiService {
     // Separater Client ohne Interceptors für den Token-Refresh
     this.refreshClient = axios.create({
       baseURL: API_BASE_URL,
+      withCredentials: true,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -100,18 +100,11 @@ class ApiService {
 
     // 401 abfangen und Access-Token per Refresh-Token erneuern
     if (response.status === 401 && !originalConfig._retry) {
-      const refreshToken = localStorage.getItem("refresh_token");
-      if (!refreshToken) {
-        // Kein Refresh-Token -> Logout
-        this.forceLogout();
-        return Promise.reject(error);
-      }
-
       // Markiere Original-Request als "wird wiederholt"
       originalConfig._retry = true;
 
       try {
-        const newAccessToken = await this.refreshAccessToken(refreshToken);
+        const newAccessToken = await this.refreshAccessToken();
 
         // Authorization für den Original-Request setzen und erneut senden
         setHeader(originalConfig.headers, "Authorization", `Bearer ${newAccessToken}`);
@@ -120,12 +113,13 @@ class ApiService {
         this.forceLogout();
         return Promise.reject(refreshErr);
       }
+      //am besten nur rerouten wenn man nicht bei login/re
     }
 
     return Promise.reject(error);
   }
 
-  private async refreshAccessToken(refreshToken: string): Promise<string> {
+  private async refreshAccessToken(): Promise<string> {
     if (this.isRefreshing) {
       // Warte, bis der laufende Refresh fertig ist
       return new Promise<string>((resolve, reject) => {
@@ -137,10 +131,9 @@ class ApiService {
     this.isRefreshing = true;
 
     try {
-      // Passe Endpoint/Body an dein Backend an
+      // Backend: reads httpOnly refresh cookie; no body needed
       const { data } = await this.refreshClient.post<{ accessToken: string }>(
-        "/auth/refresh",
-        { token: refreshToken },
+        "/authentication/token/refresh"
       );
 
       const newAccessToken = data.accessToken;
@@ -167,7 +160,7 @@ class ApiService {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     // Optional: zu Login leiten
-    window.location.href = "/login";
+    if (window.location.pathname !== "/login" && window.location.pathname !== "/register") window.location.href = "/login";
   }
 
   // Public API – gibt standardmäßig .data zurück

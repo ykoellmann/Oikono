@@ -101,11 +101,12 @@ public static class DependencyInjection
     {
         services.AddCors(options =>
         {
-            options.AddDefaultPolicy(policy =>
+            options.AddPolicy("DevCors", policy =>
             {
-                policy.AllowAnyOrigin()
+                policy.WithOrigins("http://localhost:5173", "")
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             });
         });
         services.AddScoped<IAuthorizationService, AuthorizationService>();
