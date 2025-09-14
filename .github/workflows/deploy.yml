@@ -32,11 +32,12 @@ jobs:
       - name: Build Frontend
         run: |
           docker build \
-            -f src/Oikono.Web/oikono/Dockerfile \
-            -t oikono.web:local .
+            -f Dockerfile \
+            -t oikono.web:local \
+            src/Oikono.Web/oikono
 
       # Deploy auf Pi
-      - name: Pull & Start containers
+      - name: Start containers
         run: |
           docker-compose -f docker-compose.api.yml up -d --build
           docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d --build
