@@ -24,7 +24,7 @@ jobs:
       # Build API image
       - name: Build API
         run: |
-          docker build --platform linux/arm64
+          docker build --platform linux/arm64 \
           -f src/Oikono.Api/Dockerfile \
             -t ghcr.io/ykoellmann/oikono.api:arm64 .
           docker push ghcr.io/ykoellmann/oikono.api:arm64
