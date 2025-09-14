@@ -14,33 +14,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Build API image lokal
+      # API builden
       - name: Build API
         run: |
           docker build \
             -f src/Oikono.Api/Dockerfile \
-            -t oikono.api:local src/Oikono.Api
+            -t oikono.api:local .
 
-      # Build Loadbalancer image lokal
+      # Loadbalancer builden
       - name: Build Loadbalancer
         run: |
           docker build \
             -f src/Oikono.LoadBalancer/Dockerfile \
-            -t oikono.loadbalancer:local src/Oikono.LoadBalancer
+            -t oikono.loadbalancer:local .
 
-      # Build Frontend image lokal
+      # Frontend builden
       - name: Build Frontend
         run: |
           docker build \
             -f src/Oikono.Web/oikono/Dockerfile \
-            -t oikono.web:local src/Oikono.Web/oikono
+            -t oikono.web:local .
 
-      # Deploy auf Pi (lokal mit den frisch gebauten Images)
-      - name: Deploy containers
+      # Deploy auf Pi
+      - name: Pull & Start containers
         run: |
           docker-compose -f docker-compose.api.yml up -d --build
           docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d --build
-
-      # Optional: Aufräumen, damit die Platte nicht vollläuft
-      - name: Cleanup old images
-        run: docker image prune -af
