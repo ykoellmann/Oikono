@@ -2,8 +2,8 @@ name: Build & Deploy to Pi
 
 on:
   push:
-    tags:
-      - 'v*' # Trigger bei neuen Versionstags
+    braches:
+      - main
 
 jobs:
   build-and-deploy:
@@ -14,40 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+      # Clean up old containers
+      - name: Stop containers
+        run: |
+          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml down --remove-orphans || true
+          docker-compose -f docker-compose.api.yml down --remove-orphans || true
 
       # Build API image
       - name: Build API
         run: |
           docker build --platform linux/arm64 \
-          -f src/Oikono.Api/Dockerfile \
-            -t ghcr.io/ykoellmann/oikono.api:arm64 .
-          docker push ghcr.io/ykoellmann/oikono.api:arm64
+            -f src/Oikono.Api/Dockerfile \
+            -t oikono.api:local .
 
       # Build Loadbalancer image
       - name: Build Loadbalancer
         run: |
-          docker build --platform linux/arm64 -f src/Oikono.LoadBalancer/Dockerfile \
-            -t ghcr.io/ykoellmann/oikono.loadbalancer:arm64 .
-          docker push ghcr.io/ykoellmann/oikono.loadbalancer:arm64
+          docker build --platform linux/arm64 \
+            -f src/Oikono.LoadBalancer/Dockerfile \
+            -t oikono.loadbalancer:local .
 
       # Build Frontend image
-      - name: Build & Push Frontend
+      - name: Build Frontend
         run: |
-          docker build \
+          docker build --platform linux/arm64 \
             -f src/Oikono.Web/oikono/Dockerfile \
-            -t ghcr.io/ykoellmann/oikono.web:arm64 src/Oikono.Web/oikono
-          docker push ghcr.io/ykoellmann/oikono.web:arm64
+            -t oikono.web:local src/Oikono.Web/oikono
 
       # Deploy auf Pi
-      - name: Pull & Start containers
+      - name: Start containers
         run: |
-          docker-compose -f docker-compose.api.yml pull
-          docker-compose -f docker-compose.api.yml up -d
-          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml pull
-          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d
+          docker-compose -f docker-compose.api.yml up -d --build
+          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d --build
