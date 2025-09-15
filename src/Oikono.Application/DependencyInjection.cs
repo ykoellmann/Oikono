@@ -5,6 +5,7 @@ using Mapster;
 using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Oikono.Application.Common.MediatR;
 
 namespace Oikono.Application;
 
@@ -19,6 +20,17 @@ public static class DependencyInjection
         });
 
         services.AddPipelineBehaviours();
+        
+        services.AddTransient(typeof(IRequestHandler<,>),
+            typeof(GetListQueryHandler<,,>));
+        services.AddTransient(typeof(IRequestHandler<,>),
+            typeof(GetByIdQueryHandler<,,>));
+        services.AddTransient(typeof(IRequestHandler<,>),
+            typeof(CreateCommandHandler<,,,>));
+        services.AddTransient(typeof(IRequestHandler<,>),
+            typeof(UpdateCommandHandler<,,,>));
+        services.AddTransient(typeof(IRequestHandler<,>),
+            typeof(DeleteCommandHandler<,>));
 
         services.AddMapping();
 
