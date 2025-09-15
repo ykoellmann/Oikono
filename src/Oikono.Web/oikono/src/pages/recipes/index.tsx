@@ -5,7 +5,7 @@ import { RecipeService } from "@/pages/recipes/lib/recipeService";
 import { useSearchParams } from "react-router-dom";
 import type { Recipe } from "@/pages/recipes/lib/recipe";
 import {CirclePlus} from "lucide-react";
-import { CreateRecipeDialog } from "@/pages/recipes/new-recipe-dialog";
+import { CreateRecipeDialog } from "@/pages/recipes/new-recipe-dialog.tsx";
 
 export default function RecipesPage() {
   const [searchParams] = useSearchParams();
