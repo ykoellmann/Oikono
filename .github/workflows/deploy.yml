@@ -2,8 +2,8 @@ name: Build & Deploy to Pi
 
 on:
   push:
-    tags:
-      - 'v*'
+    braches:
+      - main
 
 jobs:
   build-and-deploy:
