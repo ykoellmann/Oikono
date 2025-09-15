@@ -7,7 +7,16 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {RecipeService} from "@/pages/recipes/lib/recipeService";
 import {ScrollArea} from "@/components/ui/scroll-area";
-import {Popup, PopupClose, PopupContent, PopupDescription, PopupFooter, PopupHeader, PopupTitle, PopupTrigger} from "@/components/ui/popup";
+import {
+    Popup,
+    PopupClose,
+    PopupContent,
+    PopupDescription,
+    PopupFooter,
+    PopupHeader,
+    PopupTitle,
+    PopupTrigger
+} from "@/components/ui/popup";
 import {Input} from "@/components/ui/input.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 
@@ -199,17 +208,17 @@ export function CreateRecipeDialog({children, onCreated}: { children: React.Reac
 
                 {/* Scrollbarer Bereich */}
                 <ScrollArea className="flex-1 min-h-0 px-6 pb-6">
-                    <CreateRecipeForm onSaved={handleSaved} />
-                </ScrollArea>
+                    <CreateRecipeForm onSaved={handleSaved}/>
 
-                <PopupFooter className="px-6 pb-6">
-                    <PopupClose asChild>
-                        <Button variant="outline">Schließen</Button>
-                    </PopupClose>
-                    <Button type="submit" form="create-recipe-form">
-                        Speichern
-                    </Button>
-                </PopupFooter>
+                    <PopupFooter className="px-6 pb-6">
+                        <PopupClose asChild>
+                            <Button variant="outline">Schließen</Button>
+                        </PopupClose>
+                        <Button type="submit" form="create-recipe-form">
+                            Speichern
+                        </Button>
+                    </PopupFooter>
+                </ScrollArea>
             </PopupContent>
         </Popup>
     );
