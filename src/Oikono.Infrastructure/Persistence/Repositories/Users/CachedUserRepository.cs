@@ -20,10 +20,7 @@ public class CachedUserRepository : CachedRepository<User, UserId>, IUserReposit
 
     public async Task<User?> GetByEmailAsync(string email, CancellationToken ct)
     {
-        var cacheKey = new CacheKey<User>(nameof(GetByEmailAsync), email);
-
-        return await _cache.GetOrCreateAsync(cacheKey, CacheExpiration,
-            _ => _decorated.GetByEmailAsync(email, ct));
+        return await _decorated.GetByEmailAsync(email, ct);
     }
 
     public async Task<bool> IsEmailUniqueAsync(string email, CancellationToken ct)
