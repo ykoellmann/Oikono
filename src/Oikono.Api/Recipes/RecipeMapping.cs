@@ -25,7 +25,7 @@ public class RecipeMapping : IRegister
             .Map(dest => dest.Rating, src => src.Rating)
             .Map(dest => dest.Tags, src => src.Tags);
 
-        config.NewConfig<Tag, TagResult>()
+        config.NewConfig<Domain.Recipes.Tag, TagResult>()
             .Map(dest => dest.Name, src => src.Name);
     }
 }

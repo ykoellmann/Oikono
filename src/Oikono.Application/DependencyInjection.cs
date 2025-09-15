@@ -15,22 +15,12 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg =>
         {
+            cfg.MaxTypesClosing = 0;
+            cfg.RegisterGenericHandlers = true;
             cfg.RegisterServicesFromAssemblies(typeof(DependencyInjection).Assembly);
-            // cfg.RegisterServicesFromAssemblies(typeof(Domain.Common.Events.UpdatedEvent<,>).Assembly);
         });
-
-        services.AddPipelineBehaviours();
         
-        services.AddTransient(typeof(IRequestHandler<,>),
-            typeof(GetListQueryHandler<,,>));
-        services.AddTransient(typeof(IRequestHandler<,>),
-            typeof(GetByIdQueryHandler<,,>));
-        services.AddTransient(typeof(IRequestHandler<,>),
-            typeof(CreateCommandHandler<,,,>));
-        services.AddTransient(typeof(IRequestHandler<,>),
-            typeof(UpdateCommandHandler<,,,>));
-        services.AddTransient(typeof(IRequestHandler<,>),
-            typeof(DeleteCommandHandler<,>));
+        services.AddPipelineBehaviours();
 
         services.AddMapping();
 

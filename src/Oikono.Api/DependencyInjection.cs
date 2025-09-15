@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ErrorOr;
 using Oikono.Api.Common.Errors;
 using Oikono.Application.Common.Interfaces.Security;
 using Oikono.Infrastructure.Security;
@@ -6,9 +7,14 @@ using Oikono.Infrastructure.Security.CurrentUserProvider;
 using Oikono.Infrastructure.Security.PolicyEnforcer;
 using Mapster;
 using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
+using Oikono.Api.Common.Controllers;
+using Oikono.Application.Common.Interfaces.Persistence;
+using Oikono.Application.Common.MediatR;
+using Oikono.Domain.Models;
 
 namespace Oikono.Api;
 
@@ -54,6 +60,8 @@ public static class DependencyInjection
         services.AddRateLimiting();
 
         services.AddMapping();
+
+        services.AddGenericHandlers();
 
         return services;
     }
@@ -112,5 +120,62 @@ public static class DependencyInjection
         services.AddScoped<IAuthorizationService, AuthorizationService>();
         services.AddScoped<IPolicyEnforcer, PolicyEnforcer>();
         services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+    }
+
+    private static void AddGenericHandlers(this IServiceCollection services)
+    {
+        var controllerTypes = typeof(Program).Assembly.GetTypes()
+            .Where(t => t.BaseType is { IsGenericType: true } &&
+                        t.BaseType.GetGenericTypeDefinition() == typeof(Controller<,,,,>));
+
+        foreach (var controller in controllerTypes)
+        {
+            var args = controller.BaseType!.GetGenericArguments();
+            var repo = args[0];
+            var entity = args[1];
+            var id = args[2];
+            var request = args[3];
+            var response = args[4];
+
+            var method = typeof(DependencyInjection)
+                .GetMethod(nameof(AddCrudHandlers), BindingFlags.Public | BindingFlags.Static)!
+                .MakeGenericMethod(repo, entity, id, request, response);
+
+            method.Invoke(null, new object[] { services });
+        }
+    }
+
+    public static IServiceCollection AddCrudHandlers<TRepo, TEntity, TId, TRequest, TResponse>(
+        this IServiceCollection services)
+        where TId : Id<TId>, new()
+        where TEntity : Entity<TId>
+        where TRepo : class, IRepository<TEntity, TId>
+    {
+        // GetAll
+        services.AddTransient<
+            IRequestHandler<GetListQuery<TEntity, TId, TResponse>, ErrorOr<List<TResponse>>>,
+            GetListQueryHandler<TRepo, TEntity, TId, TResponse>>();
+
+        // GetById
+        services.AddTransient<
+            IRequestHandler<GetByIdQuery<TEntity, TId, TResponse>, ErrorOr<TResponse>>,
+            GetByIdQueryHandler<TRepo, TEntity, TId, TResponse>>();
+
+        // Create
+        services.AddTransient<
+            IRequestHandler<CreateCommand<TEntity, TId, TRequest, TResponse>, ErrorOr<TResponse>>,
+            CreateCommandHandler<TRepo, TEntity, TId, TRequest, TResponse>>();
+
+        // Update
+        services.AddTransient<
+            IRequestHandler<UpdateCommand<TEntity, TId, TRequest, TResponse>, ErrorOr<TResponse>>,
+            UpdateCommandHandler<TRepo, TEntity, TId, TRequest, TResponse>>();
+
+        // Delete
+        services.AddTransient<
+            IRequestHandler<DeleteCommand<TEntity, TId>, ErrorOr<Deleted>>,
+            DeleteCommandHandler<TRepo, TEntity, TId>>();
+
+        return services;
     }
 }

@@ -10,11 +10,11 @@ namespace Oikono.Application.Common.MediatR
 
     public record IdCommand<TId, TResult>(TId Id, UserId UserId) : Command<TResult>(UserId);
 
-    public record GetListQuery<TEntity, TResult>() : IQuery<IEnumerable<TResult>>;
+    public record GetListQuery<TEntity, TId, TResult>() : IQuery<List<TResult>>;
 
     public record GetByIdQuery<TEntity, TId, TResult>(TId Id) : IQuery<TResult>;
 
-    public record CreateCommand<TEntity, TRequest, TResult>(TRequest Request, UserId UserId) : Command<TResult>(UserId);
+    public record CreateCommand<TEntity, TId, TRequest, TResult>(TRequest Request, UserId UserId) : Command<TResult>(UserId);
 
     public record UpdateCommand<TEntity, TId, TRequest, TResult>(TId Id, TRequest Request, UserId UserId)
         : IdCommand<TId, TResult>(Id, UserId);

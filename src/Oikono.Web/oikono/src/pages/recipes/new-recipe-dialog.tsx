@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/popup";
 import {Input} from "@/components/ui/input.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
+import { TagBoxWithCreate } from "@/components/tag-box-with-create";
 
 const IngredientSchema = z.object({
     name: z.string().min(1, "Required").max(80),
@@ -59,6 +60,42 @@ function CreateRecipeForm({onSaved}: { onSaved?: () => void }) {
 
     const ingArray = useFieldArray({control: form.control, name: "ingredients"});
     const stepsArray = useFieldArray({control: form.control, name: "steps"});
+
+    // Tags options for TagBoxWithCreate
+    type TagOption = { label: string; value: string };
+    const [tagOptions, setTagOptions] = React.useState<TagOption[]>([]);
+
+    React.useEffect(() => {
+        let active = true;
+        RecipeService.getTags()
+            .then(tags => {
+                if (!active) return;
+                const opts = tags.map(t => ({ label: t, value: t }));
+                setTagOptions(opts);
+            })
+            .catch(() => {/* ignore */});
+        return () => { active = false; };
+    }, []);
+
+    const tagsStr = form.watch("tags");
+    const selectedTags = React.useMemo(() => (tagsStr ?? "")
+        .split(",")
+        .map(t => t.trim())
+        .filter(Boolean), [tagsStr]);
+
+    async function handleCreateTag(value: string) {
+        const v = (value || "").trim();
+        if (!v) return;
+        try {
+            await RecipeService.upsertTag(v);
+            setTagOptions(prev => {
+                if (prev.some(o => o.value === v)) return prev;
+                return [...prev, { label: v, value: v }];
+            });
+        } catch {
+            // ignore errors
+        }
+    }
 
     function onFilesChange(files: FileList | null) {
         const arr = files ? Array.from(files) : [];
@@ -111,8 +148,14 @@ function CreateRecipeForm({onSaved}: { onSaved?: () => void }) {
                     <FormMessage className="text-left">{form.formState.errors.portions?.message as string}</FormMessage>
                 </section>
                 <section className="grid gap-3">
-                    <FormLabel className="text-left" htmlFor="tags">Tags (Kommagetrennt)</FormLabel>
-                    <Input id="tags" placeholder="vegan, schnell" {...form.register("tags")} />
+                    <FormLabel className="text-left" htmlFor="tags">Tags</FormLabel>
+                    <TagBoxWithCreate
+                        options={tagOptions}
+                        values={selectedTags}
+                        onChange={(vals) => form.setValue("tags", vals.join(", "))}
+                        onCreate={handleCreateTag}
+                        placeholder="Tag auswählen oder neu erstellen"
+                    />
                 </section>
             </div>
 

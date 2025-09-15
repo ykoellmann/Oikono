@@ -1,10 +1,17 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Oikono.Application.Common.Interfaces.Persistence;
 using Oikono.Application.Common.MediatR;
+using Oikono.Domain.Models;
 
 namespace Oikono.Api.Common.Controllers;
 
-public class Controller<TEntity, TId, TRequest, TResponse> : ApiController
+[AllowAnonymous]
+public class Controller<TIRepository, TEntity, TId, TRequest, TResponse> : ApiController
+    where TId : Id<TId>, new()
+    where TEntity : Entity<TId>
+    where TIRepository : class, IRepository<TEntity, TId>
 {
     private readonly ISender _mediator;
 
@@ -17,7 +24,7 @@ public class Controller<TEntity, TId, TRequest, TResponse> : ApiController
     public async Task<IActionResult> Get(CancellationToken ct)
     {
         var result = await _mediator
-            .Send(new GetListQuery<TEntity, TResponse>(), ct);
+            .Send(new GetListQuery<TEntity, TId, TResponse>(), ct);
 
         return result.Match(
             dtos => Ok(dtos),
@@ -27,8 +34,9 @@ public class Controller<TEntity, TId, TRequest, TResponse> : ApiController
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id, CancellationToken ct)
     {
+        var typedId = (TId)Activator.CreateInstance(typeof(TId), id)!;
         var result = await _mediator
-            .Send(new GetByIdQuery<TEntity, Guid, TResponse>(id), ct);
+            .Send(new GetByIdQuery<TEntity, TId, TResponse>(typedId), ct);
 
         return result.Match(
             dto => Ok(dto),
@@ -39,7 +47,7 @@ public class Controller<TEntity, TId, TRequest, TResponse> : ApiController
     public async Task<IActionResult> Post([FromBody] TRequest createDto, CancellationToken ct)
     {
         var result = await _mediator
-            .Send(new CreateCommand<TEntity, TRequest, TResponse>(createDto, UserId), ct);
+            .Send(new CreateCommand<TEntity, TId, TRequest, TResponse>(createDto, UserId), ct);
 
         return result.Match(
             dto => Ok(dto),
@@ -49,8 +57,9 @@ public class Controller<TEntity, TId, TRequest, TResponse> : ApiController
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Put(Guid id, [FromBody] TRequest updateDto, CancellationToken ct)
     {
+        var typedId = (TId)Activator.CreateInstance(typeof(TId), id)!;
         var result = await _mediator
-            .Send(new UpdateCommand<TEntity, Guid, TRequest, TResponse>(id, updateDto, UserId), ct);
+            .Send(new UpdateCommand<TEntity, TId, TRequest, TResponse>(typedId, updateDto, UserId), ct);
 
         return result.Match(
             _ => Ok(),
@@ -60,8 +69,9 @@ public class Controller<TEntity, TId, TRequest, TResponse> : ApiController
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
+        var typedId = (TId)Activator.CreateInstance(typeof(TId), id)!;
         var result = await _mediator
-            .Send(new DeleteCommand<TEntity, Guid>(id, UserId), ct);
+            .Send(new DeleteCommand<TEntity, TId>(typedId, UserId), ct);
 
         return result.Match(
             _ => Ok(),

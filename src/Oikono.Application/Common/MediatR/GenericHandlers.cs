@@ -6,21 +6,22 @@ using ErrorOr;
 
 namespace Oikono.Application.Common.MediatR
 {
-    public class GetListQueryHandler<TEntity, TId, TResult>
-        : IQueryHandler<GetListQuery<TEntity, TResult>, IEnumerable<TResult>>
+    public class GetListQueryHandler<TIRepository, TEntity, TId, TResult>
+        : IQueryHandler<GetListQuery<TEntity, TId, TResult>, List<TResult>>
         where TId : Id<TId>, new()
         where TEntity : Entity<TId>
+        where TIRepository : IRepository<TEntity, TId>
     {
-        private readonly IRepository<TEntity, TId> _repo;
+        private readonly TIRepository _repo;
         private readonly IMapper _mapper;
 
-        public GetListQueryHandler(IRepository<TEntity, TId> repo, IMapper mapper)
+        public GetListQueryHandler(TIRepository repo, IMapper mapper)
         {
             _repo = repo;
             _mapper = mapper;
         }
 
-        public async Task<ErrorOr<IEnumerable<TResult>>> Handle(GetListQuery<TEntity, TResult> request,
+        public async Task<ErrorOr<List<TResult>>> Handle(GetListQuery<TEntity, TId, TResult> request,
             CancellationToken ct)
         {
             var entities = await _repo.GetListAsync(ct);
@@ -28,15 +29,16 @@ namespace Oikono.Application.Common.MediatR
         }
     }
 
-    public class GetByIdQueryHandler<TEntity, TId, TResult>
+    public class GetByIdQueryHandler<TIRepository, TEntity, TId, TResult>
         : IQueryHandler<GetByIdQuery<TEntity, TId, TResult>, TResult>
         where TId : Id<TId>, new()
         where TEntity : Entity<TId>
+        where TIRepository : IRepository<TEntity, TId>
     {
-        private readonly IRepository<TEntity, TId> _repo;
+        private readonly TIRepository _repo;
         private readonly IMapper _mapper;
 
-        public GetByIdQueryHandler(IRepository<TEntity, TId> repo, IMapper mapper)
+        public GetByIdQueryHandler(TIRepository repo, IMapper mapper)
         {
             _repo = repo;
             _mapper = mapper;
@@ -49,22 +51,23 @@ namespace Oikono.Application.Common.MediatR
         }
     }
     
-    public class CreateCommandHandler<TEntity, TId, TRequest, TResult>
-        : ICommandHandler<CreateCommand<TEntity, TRequest, TResult>, TResult>
+    public class CreateCommandHandler<TIRepository, TEntity, TId, TRequest, TResult>
+        : ICommandHandler<CreateCommand<TEntity, TId, TRequest, TResult>, TResult>
         where TId : Id<TId>, new()
         where TEntity : Entity<TId>
+        where TIRepository : IRepository<TEntity, TId>
     {
-        private readonly IRepository<TEntity, TId> _repo;
+        private readonly TIRepository _repo;
         private readonly IMapper _mapper;
 
-        public CreateCommandHandler(IRepository<TEntity, TId> repo, IMapper mapper)
+        public CreateCommandHandler(TIRepository repo, IMapper mapper)
         {
             _repo = repo;
             _mapper = mapper;
         }
 
         public async Task<ErrorOr<TResult>> Handle(
-            CreateCommand<TEntity, TRequest, TResult> request,
+            CreateCommand<TEntity, TId, TRequest, TResult> request,
             CancellationToken ct)
         {
             var entity = _mapper.Map<TEntity>(request.Request);
@@ -73,15 +76,16 @@ namespace Oikono.Application.Common.MediatR
         }
     }
     
-    public class UpdateCommandHandler<TEntity, TId, TRequest, TResult>
+    public class UpdateCommandHandler<TIRepository, TEntity, TId, TRequest, TResult>
         : ICommandHandler<UpdateCommand<TEntity, TId, TRequest, TResult>, TResult>
         where TId : Id<TId>, new()
         where TEntity : Entity<TId>
+        where TIRepository : IRepository<TEntity, TId>
     {
-        private readonly IRepository<TEntity, TId> _repo;
+        private readonly TIRepository _repo;
         private readonly IMapper _mapper;
 
-        public UpdateCommandHandler(IRepository<TEntity, TId> repo, IMapper mapper)
+        public UpdateCommandHandler(TIRepository repo, IMapper mapper)
         {
             _repo = repo;
             _mapper = mapper;
@@ -100,14 +104,15 @@ namespace Oikono.Application.Common.MediatR
         }
     }
     
-    public class DeleteCommandHandler<TEntity, TId>
+    public class DeleteCommandHandler<TIRepository, TEntity, TId>
         : ICommandHandler<DeleteCommand<TEntity, TId>, Deleted>
         where TId : Id<TId>, new()
         where TEntity : Entity<TId>
+        where TIRepository : IRepository<TEntity, TId>
     {
-        private readonly IRepository<TEntity, TId> _repo;
+        private readonly TIRepository _repo;
 
-        public DeleteCommandHandler(IRepository<TEntity, TId> repo)
+        public DeleteCommandHandler(TIRepository repo)
         {
             _repo = repo;
         }
