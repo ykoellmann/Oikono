@@ -1,4 +1,4 @@
-﻿networks:
+networks:
   oikono:
     name: oikono
   backend:
@@ -8,7 +8,7 @@
 services:
   oikono.api.green:
     container_name: oikono.api.green
-    image: ghcr.io/ykoellmann/oikono.api:arm64
+    image: oikono.api:arm64
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://*:80
@@ -118,7 +118,7 @@ services:
 #      - logdata:/var/logs
   oikono.loadbalancer:
     container_name: oikono.loadbalancer
-    image: ghcr.io/ykoellmann/oikono.loadbalancer:arm64
+    image: oikono.loadbalancer:arm64
     restart: unless-stopped
     ports:
 #      - "${ADDRESS}:8001:80"
