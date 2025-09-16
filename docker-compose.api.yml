@@ -7,7 +7,7 @@ networks:
 
 services:
   oikono.api.green:
-    container_name: oikono.api.green
+    container_name: oikono.api
     image: oikono.api:arm64
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
