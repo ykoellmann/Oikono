@@ -2,7 +2,7 @@ name: Build & Deploy to Pi
 
 on:
   push:
-    braches:
+    branches:
       - main
 
 jobs:
@@ -23,21 +23,21 @@ jobs:
       # Build API image
       - name: Build API
         run: |
-          docker build --platform linux/arm64 \
+          docker build --no-cache --platform linux/arm64 \
             -f src/Oikono.Api/Dockerfile \
             -t oikono.api:local .
 
       # Build Loadbalancer image
       - name: Build Loadbalancer
         run: |
-          docker build --platform linux/arm64 \
+          docker build --no-cache --platform linux/arm64 \
             -f src/Oikono.LoadBalancer/Dockerfile \
             -t oikono.loadbalancer:local .
 
       # Build Frontend image
       - name: Build Frontend
         run: |
-          docker build --platform linux/arm64 \
+          docker build --no-cache --platform linux/arm64 \
             -f src/Oikono.Web/oikono/Dockerfile \
             -t oikono.web:local src/Oikono.Web/oikono
 
