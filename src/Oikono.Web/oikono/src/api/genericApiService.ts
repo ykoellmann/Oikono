@@ -17,7 +17,12 @@ export type Mapper<TReq, TRes, TCreate = TReq, TUpdate = Partial<TReq>> = {
 };
 
 export class GenericApiService<TReq, TRes, TCreate = TReq, TUpdate = Partial<TReq>> {
-  constructor(private readonly basePath: string, private readonly mapper: Mapper<TReq, TRes, TCreate, TUpdate> = {}) {}
+  private readonly basePath: string;
+  private readonly mapper: Mapper<TReq, TRes, TCreate, TUpdate>;
+  constructor(basePath: string, mapper: Mapper<TReq, TRes, TCreate, TUpdate> = {}) {
+    this.basePath = basePath;
+    this.mapper = mapper;
+  }
 
   protected buildQuery(params?: ListParams): string {
     if (!params) return "";

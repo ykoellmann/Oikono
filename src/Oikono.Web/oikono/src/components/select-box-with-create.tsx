@@ -4,25 +4,25 @@ import {Command, CommandGroup, CommandItem, CommandList, CommandInput} from "@/c
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 
-export type Option = { label: string; value: string | number };
+export type Option<T extends string | number = string> = { label: string; value: T };
 
-interface SelectBoxWithCreateProps {
-    options: Option[];
-    value: string | number | null | undefined;
-    onChange: (value: string | number | null) => void;
+interface SelectBoxWithCreateProps<T extends string | number = string> {
+    options: Option<T>[];
+    value: T | null | undefined;
+    onChange: (value: T | null) => void;
     onCreate?: (label: string) => void;
     allowCreate?: boolean;
     placeholder?: string;
 }
 
-export function SelectBoxWithCreate({
+export function SelectBoxWithCreate<T extends string | number = string>({
                                         options,
                                         value,
                                         onChange,
                                         onCreate,
                                         allowCreate = true,
                                         placeholder = "Auswählen oder erstellen"
-                                    }: SelectBoxWithCreateProps) {
+                                    }: SelectBoxWithCreateProps<T>) {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
 
@@ -78,7 +78,9 @@ export function SelectBoxWithCreate({
                                     onSelect={() => {
                                         if (!onCreate) return;
                                         onCreate(search);
-                                        onChange(search);
+                                        // Only auto-select the newly created value if current options are string-valued
+                                        const isStringValues = typeof (options[0]?.value) === "string";
+                                        if (isStringValues) onChange(search as unknown as T);
                                         setOpen(false);
                                         setSearch("");
                                     }}

@@ -92,11 +92,11 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
   const stepsArray = useFieldArray({ control: form.control, name: "steps" });
 
   // Lookups
-  const [tagOptions, setTagOptions] = React.useState<Option[]>([]);
-  const [sideDishOptions, setSideDishOptions] = React.useState<Option[]>([]);
-  const [ingredientOptions, setIngredientOptions] = React.useState<Option[]>([]);
-  const [unitOptions, setUnitOptions] = React.useState<Option[]>([]); // value: number
-  const [deviceOptions, setDeviceOptions] = React.useState<Option[]>([]);
+  const [tagOptions, setTagOptions] = React.useState<Option<string>[]>([]);
+  const [sideDishOptions, setSideDishOptions] = React.useState<Option<string>[]>([]);
+  const [ingredientOptions, setIngredientOptions] = React.useState<Option<string>[]>([]);
+  const [unitOptions, setUnitOptions] = React.useState<Option<number>[]>([]); // value: number
+  const [deviceOptions, setDeviceOptions] = React.useState<Option<string>[]>([]);
 
   React.useEffect(() => {
     let active = true;
@@ -113,7 +113,7 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
         setTagOptions(tags.map(t => ({ label: t.name, value: t.id })));
         setSideDishOptions(sides.map(s => ({ label: s.name, value: s.id })));
         setIngredientOptions(ings.map(i => ({ label: i.name, value: i.id })));
-        setUnitOptions(units as unknown as Option[]);
+        setUnitOptions(units);
         setDeviceOptions(devices.map(d => ({ label: d.name, value: d.id })));
       } catch {
         // ignore
@@ -124,27 +124,27 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
 
   async function onCreateTag(label: string) {
     const created = await TagService.createLookup(label);
-    const opt = { label: created.name, value: created.id } as Option;
+    const opt = { label: created.name, value: created.id } as Option<string>;
     setTagOptions(prev => prev.some(o => o.value === opt.value) ? prev : [...prev, opt]);
   }
 
   async function onCreateSideDish(label: string) {
     const created = await SideDishService.createLookup(label);
-    const opt = { label: created.name, value: created.id } as Option;
+    const opt = { label: created.name, value: created.id } as Option<string>;
     setSideDishOptions(prev => prev.some(o => o.value === opt.value) ? prev : [...prev, opt]);
     form.setValue("sideDishIds", [...(form.getValues("sideDishIds") ?? []), opt.value]);
   }
 
   async function onCreateIngredient(label: string) {
     const created = await IngredientService.createLookup(label);
-    const opt = { label: created.name, value: created.id } as Option;
+    const opt = { label: created.name, value: created.id } as Option<string>;
     setIngredientOptions(prev => prev.some(o => o.value === opt.value) ? prev : [...prev, opt]);
   }
 
 
   async function onCreateDevice(label: string) {
     const created = await DeviceService.createLookup(label);
-    const opt = { label: created.name, value: created.id } as Option;
+    const opt = { label: created.name, value: created.id } as Option<string>;
     setDeviceOptions(prev => prev.some(o => o.value === opt.value) ? prev : [...prev, opt]);
   }
 
@@ -202,16 +202,16 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
         <div className="flex flex-col gap-2">
           {ingArray.fields.map((ing, iIdx) => (
             <div key={ing.id} className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center">
-              <SelectBoxWithCreate
+              <SelectBoxWithCreate<string>
                 options={ingredientOptions}
                 value={(form.watch(`parts.${pIdx}.ingredients.${iIdx}.ingredientId` as const) as unknown as string) ?? null}
-                onChange={(v) => form.setValue(`parts.${pIdx}.ingredients.${iIdx}.ingredientId` as const, v ?? "")}
+                onChange={(v) => form.setValue(`parts.${pIdx}.ingredients.${iIdx}.ingredientId` as const, (v ?? ""))}
                 onCreate={onCreateIngredient}
                 placeholder="Zutat wählen"
               />
               <Input type="number" step="0.01" className="w-28" placeholder="Menge"
                      {...form.register(`parts.${pIdx}.ingredients.${iIdx}.amount` as const, { valueAsNumber: true })} />
-              <SelectBoxWithCreate
+              <SelectBoxWithCreate<number>
                 options={unitOptions}
                 value={(form.watch(`parts.${pIdx}.ingredients.${iIdx}.unit` as const) as unknown as number) ?? null}
                 onChange={(v) => form.setValue(`parts.${pIdx}.ingredients.${iIdx}.unit` as const, (v as number) ?? (undefined as unknown as number))}
@@ -346,7 +346,7 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
       <section className="grid gap-3">
         <div className="flex items-center justify-between">
           <FormLabel className="text-left">Komponenten (optional)</FormLabel>
-          <Button type="button" variant="outline" onClick={() => partsArray.append({ name: "", ingredients: [{ ingredientId: "", amount: 1, unit: "" }] })}>
+          <Button type="button" variant="outline" onClick={() => partsArray.append({ name: "", ingredients: [{ ingredientId: "", amount: 1, unit: (NaN as unknown as number) }] })}>
             <Plus className="h-4 w-4 mr-2" /> Komponente hinzufügen
           </Button>
         </div>
@@ -378,7 +378,7 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <div>
                   <FormLabel className="text-left">Gerät (optional)</FormLabel>
-                  <SelectBoxWithCreate
+                  <SelectBoxWithCreate<string>
                     options={deviceOptions}
                     value={(form.watch(`steps.${idx}.deviceId` as const) as unknown as string) ?? null}
                     onChange={(v) => form.setValue(`steps.${idx}.deviceId` as const, v)}

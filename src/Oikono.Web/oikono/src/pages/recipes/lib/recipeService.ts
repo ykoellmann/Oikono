@@ -63,7 +63,7 @@ export const RecipeService = {
     return await api.get<Recipe>(`${BASE}/${encodeURIComponent(id)}`);
   },
 
-  async create(payload: FormData | Recipe): Promise<Recipe> {
+  async create(payload: unknown): Promise<Recipe> {
     if (payload instanceof FormData) {
       const res = await api.post<Recipe>(BASE, payload, { headers: { "Content-Type": "multipart/form-data" } });
       return res;
