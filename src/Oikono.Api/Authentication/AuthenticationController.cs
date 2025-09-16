@@ -38,11 +38,12 @@ public class AuthenticationController : ApiController
     public async Task<IActionResult> Register(RegisterRequest registerRequest, CancellationToken ct)
     {
         var command = _mapper.Map<RegisterCommand>(registerRequest);
+        var result  = await _mediator.Send(command, ct);
 
-        var authResult = await _mediator.Send(command, ct);
-
-        return authResult.Match(
-            SetRefreshToken,
+        // Es kommt kein AuthenticationResult mehr zurück,
+        // sondern z.B. nur eine Erfolgsmeldung oder 201 Created.
+        return result.Match(
+            _ => StatusCode(201),   // User angelegt
             Problem);
     }
 

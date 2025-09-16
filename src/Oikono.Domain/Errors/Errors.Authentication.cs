@@ -14,5 +14,9 @@ public static partial class Errors
 
         public static Error RefreshTokenExpired =>
             Error.Unauthorized("Authentication.RefreshTokenExpired", "Refresh token expired");
+
+        public static Error AccountNotActive =>
+            Error.Validation(code: "Authentication.AccountNotActive",
+                description: "Ihr Konto ist noch nicht aktiviert.");
     }
 }

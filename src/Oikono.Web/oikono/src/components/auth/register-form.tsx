@@ -5,7 +5,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {useAuth} from "@/auth/AuthContext";
+import {useAuth} from "@/auth/auth-context.tsx";
 import {FormLabel, FormMessage} from "@/components/ui/form";
 import {Link, useLocation} from "react-router-dom";
 

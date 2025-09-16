@@ -52,7 +52,6 @@ function buildQueryParams(q: RecipeQuery): string {
 
 // REST endpoints – adjust paths to your backend as needed
 const BASE = "/recipes";
-const META_BASE = "/recipes/meta"; // for unique sets: tags, sideDishes, devices, ingredients
 
 export const RecipeService = {
   async list(q: RecipeQuery = {}): Promise<PagedResult<Recipe>> {
@@ -78,47 +77,6 @@ export const RecipeService = {
 
   async delete(id: string): Promise<void> {
     await api.delete<void>(`${BASE}/${encodeURIComponent(id)}`);
-  },
-
-  // Unique/maintainable fields – simple meta endpoints
-  async getTags(): Promise<string[]> {
-    return await api.get<string[]>(`${META_BASE}/tags`);
-  },
-  async upsertTag(value: string): Promise<void> {
-    await api.post<void>(`${META_BASE}/tags`, { value });
-  },
-  async deleteTag(value: string): Promise<void> {
-    await api.delete<void>(`${META_BASE}/tags/${encodeURIComponent(value)}`);
-  },
-
-  async getSideDishes(): Promise<string[]> {
-    return await api.get<string[]>(`${META_BASE}/side-dishes`);
-  },
-  async upsertSideDish(value: string): Promise<void> {
-    await api.post<void>(`${META_BASE}/side-dishes`, { value });
-  },
-  async deleteSideDish(value: string): Promise<void> {
-    await api.delete<void>(`${META_BASE}/side-dishes/${encodeURIComponent(value)}`);
-  },
-
-  async getDevices(): Promise<string[]> {
-    return await api.get<string[]>(`${META_BASE}/devices`);
-  },
-  async upsertDevice(value: string): Promise<void> {
-    await api.post<void>(`${META_BASE}/devices`, { value });
-  },
-  async deleteDevice(value: string): Promise<void> {
-    await api.delete<void>(`${META_BASE}/devices/${encodeURIComponent(value)}`);
-  },
-
-  async getIngredients(): Promise<string[]> {
-    return await api.get<string[]>(`${META_BASE}/ingredients`);
-  },
-  async upsertIngredient(value: string): Promise<void> {
-    await api.post<void>(`${META_BASE}/ingredients`, { value });
-  },
-  async deleteIngredient(value: string): Promise<void> {
-    await api.delete<void>(`${META_BASE}/ingredients/${encodeURIComponent(value)}`);
   },
 };
 

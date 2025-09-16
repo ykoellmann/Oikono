@@ -25,13 +25,13 @@ public class User : AggregateRoot<UserId>
     public string LastName { get; set; }
     public DateOnly BirthDate { get; set; }
 
-    public bool Active { get; set; } = true;
+    public bool Active { get; set; } = false;
 
     public IReadOnlyList<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
     public IReadOnlyList<UserRole> UserRoles => _userRoles.AsReadOnly();
     public IReadOnlyList<UserPermission> UserPermissions => _userPermissions.AsReadOnly();
     public IReadOnlyList<UserPolicy> UserPolicies => _userPolicies.AsReadOnly();
-    public virtual RefreshToken? ActiveRefreshToken => _refreshTokens.SingleOrDefault(rt => !rt.Expired);
+    public virtual RefreshToken? ActiveRefreshToken => _refreshTokens.SingleOrDefault(rt => rt is { Expired: false, Disabled: false });
     public bool HasActiveRefreshToken => ActiveRefreshToken is not null;
 
 

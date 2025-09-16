@@ -1,15 +1,14 @@
 import * as React from "react";
-import { X, Plus } from "lucide-react";
+import {X, Plus} from "lucide-react";
 import {
     Command,
     CommandGroup,
     CommandItem,
     CommandList,
     CommandInput,
-    CommandEmpty,
 } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Button} from "@/components/ui/button";
 
 type Option = {
     label: string;
@@ -35,9 +34,7 @@ export function TagBoxWithCreate({
     const [search, setSearch] = React.useState("");
 
     const filtered = options.filter(
-        o =>
-            o.label.toLowerCase().includes(search.toLowerCase()) &&
-            !values.includes(o.value)
+        o => o.label.toLowerCase().includes(search.toLowerCase()) && !values.includes(o.value)
     );
 
     const remove = (val: string) => onChange(values.filter(v => v !== val));
@@ -47,10 +44,7 @@ export function TagBoxWithCreate({
             {values.map(val => {
                 const label = options.find(o => o.value === val)?.label ?? val;
                 return (
-                    <span
-                        key={val}
-                        className="flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-sm"
-                    >
+                    <span key={val} className="flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-sm">
             {label}
                         <button onClick={() => remove(val)}>
               <X className="h-3 w-3" />
@@ -58,11 +52,10 @@ export function TagBoxWithCreate({
           </span>
                 );
             })}
+
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm">
-                        + {placeholder}
-                    </Button>
+                    <Button variant="outline" size="sm">+ {placeholder}</Button>
                 </PopoverTrigger>
                 <PopoverContent className="p-0 w-[200px]">
                     <Command shouldFilter={false}>
@@ -72,34 +65,39 @@ export function TagBoxWithCreate({
                             onValueChange={setSearch}
                         />
                         <CommandList>
-                            <CommandEmpty>
-                                <Button
-                                    variant="ghost"
-                                    className="w-full justify-start"
-                                    onClick={() => {
-                                        onCreate(search);
-                                        onChange([...values, search]);
-                                        setOpen(false);
-                                        setSearch("");
-                                    }}
-                                >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Create "{search}"
-                                </Button>
-                            </CommandEmpty>
-                            <CommandGroup>
-                                {filtered.map(o => (
+                            {filtered.length > 0 && (
+                                <CommandGroup>
+                                    {filtered.map(o => (
+                                        <CommandItem
+                                            key={o.value}
+                                            onSelect={() => {
+                                                onChange([...values, o.value]);
+                                                setOpen(false);
+                                                setSearch("");
+                                            }}
+                                        >
+                                            {o.label}
+                                        </CommandItem>
+                                    ))}
+                                </CommandGroup>
+                            )}
+
+                            {filtered.length === 0 && search.length > 0 && (
+                                <CommandGroup>
                                     <CommandItem
-                                        key={o.value}
+                                        key="__create__"
                                         onSelect={() => {
-                                            onChange([...values, o.value]);
+                                            // nur Option erstellen
+                                            onCreate(search);
                                             setOpen(false);
+                                            setSearch("");
                                         }}
                                     >
-                                        {o.label}
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        Create "{search}"
                                     </CommandItem>
-                                ))}
-                            </CommandGroup>
+                                </CommandGroup>
+                            )}
                         </CommandList>
                     </Command>
                 </PopoverContent>

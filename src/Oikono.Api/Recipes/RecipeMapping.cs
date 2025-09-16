@@ -11,7 +11,7 @@ public class RecipeMapping : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<RecipeRequest, GetRecipesQuery>()
+        config.NewConfig<GetRecipesRequest, GetRecipesQuery>()
             .MapToConstructor(true);
         
         config.NewConfig(typeof(PagedResult<>), typeof(PagedResult<>))

@@ -1,6 +1,7 @@
 import React from "react";
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { RecipeService } from "@/pages/recipes/lib/recipeService";
+import { TagService } from "@/api/tagService";
 import { cn } from "@/lib/utils";
 
 // Fallback minimal UI if shadcn tags are not present in the project.
@@ -27,7 +28,7 @@ export default function TagsEditor({ recipeId, value, onChange, className }: Tag
   React.useEffect(() => {
     let active = true;
     setLoading(true);
-    RecipeService.getTags()
+    TagService.list()
       .then((tags) => { if (active) setOptions(tags); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
@@ -72,7 +73,7 @@ export default function TagsEditor({ recipeId, value, onChange, className }: Tag
     if (!v) return;
     if (!options.includes(v)) {
       try {
-        await RecipeService.upsertTag(v);
+        await TagService.create(v);
         setOptions((prev) => [...prev, v]);
       } catch {
         // ignore

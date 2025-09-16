@@ -22,7 +22,7 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-import {useAuth} from "@/auth/AuthContext.tsx";
+import {useAuth} from "@/auth/auth-context.tsx";
 
 export function NavUser({
                             user,

@@ -11,8 +11,8 @@ public class Asset : AggregateRoot<AssetId>
         ContentType = contentType;
         Data = data;
     }
-    
-    public string  FileName     { get; private set; } = null!;
-    public string  ContentType  { get; private set; } = null!;
-    public byte[]  Data         { get; private set; } = [];
+
+    public string FileName { get; private set; } = null!;
+    public string ContentType { get; private set; } = null!;
+    public byte[] Data { get; private set; } = [];
 }

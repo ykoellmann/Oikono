@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Oikono.Api.Recipes.Request;
 
-public class RecipeRequest
+public class GetRecipesRequest
 {
     [Range(1, int.MaxValue)] 
     public int Page { get; init; } = 1;

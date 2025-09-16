@@ -1,7 +1,7 @@
 import React from "react";
 import { GalleryVerticalEnd } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
-import { useAuth } from "@/auth/AuthContext";
+import { useAuth } from "@/auth/auth-context.tsx";
 import { Navigate } from "react-router-dom";
 
 export default function AuthShell({ children }: { children: React.ReactNode }) {
@@ -30,10 +30,14 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <img
-          src="/placeholder.svg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            src="/src/assets/turkey.jpg"
+            alt="Küste Türkei"
+            className="absolute inset-0 h-full w-full object-cover"
         />
+        {/* Halbtransparentes Overlay für Abdunklung */}
+        <div className="absolute inset-0 bg-black/30"></div>
+        {/* Gradient, der den Rand weich macht */}
+        <div className="absolute inset-0 bg-gradient-to-l from-black/30 to-transparent"></div>
       </div>
     </div>
   );

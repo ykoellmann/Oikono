@@ -26,7 +26,7 @@ public class OikonoDbContext : DbContext
     public DbSet<UserPermission> UserPermissions { get; set; } = null!;
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<UserRole> UserRoles { get; set; } = null!;
-    public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+    public DbSet<RefreshToken?> RefreshTokens { get; set; } = null!;
 
     public DbSet<Idempotency> Idempotencies { get; set; } = null!;
 

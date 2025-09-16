@@ -1,109 +1,96 @@
 import * as React from "react";
-import { X, Plus } from "lucide-react";
-import {
-    Command,
-    CommandGroup,
-    CommandItem,
-    CommandList,
-    CommandInput,
-    CommandEmpty,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import {Plus, ChevronsUpDown, Check} from "lucide-react";
+import {Command, CommandGroup, CommandItem, CommandList, CommandInput} from "@/components/ui/command";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {Button} from "@/components/ui/button";
 
-type Option = {
-    label: string;
-    value: string;
-};
+export type Option = { label: string; value: string | number };
 
-interface TagBoxWithCreateProps {
+interface SelectBoxWithCreateProps {
     options: Option[];
-    values: string[];
-    onChange: (values: string[]) => void;
-    onCreate: (value: string) => void;
+    value: string | number | null | undefined;
+    onChange: (value: string | number | null) => void;
+    onCreate?: (label: string) => void;
+    allowCreate?: boolean;
     placeholder?: string;
 }
 
-export function TagBoxWithCreate({
-                                     options,
-                                     values,
-                                     onChange,
-                                     onCreate,
-                                     placeholder = "Select or create...",
-                                 }: TagBoxWithCreateProps) {
+export function SelectBoxWithCreate({
+                                        options,
+                                        value,
+                                        onChange,
+                                        onCreate,
+                                        allowCreate = true,
+                                        placeholder = "Auswählen oder erstellen"
+                                    }: SelectBoxWithCreateProps) {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState("");
 
-    const filtered = options.filter(
-        o =>
-            o.label.toLowerCase().includes(search.toLowerCase()) &&
-            !values.includes(o.value)
-    );
-
-    const remove = (val: string) => onChange(values.filter(v => v !== val));
+    const selectedLabel = value ? (options.find(o => o.value === value)?.label ?? value) : "";
+    const filtered = options.filter(o => o.label.toLowerCase().includes(search.toLowerCase()));
 
     return (
-        <div className="flex flex-wrap gap-2">
-            {values.map(val => {
-                const label = options.find(o => o.value === val)?.label ?? val;
-                return (
-                    <span
-                        key={val}
-                        className="flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-sm"
-                    >
-            {label}
-                        <button onClick={() => remove(val)}>
-              <X className="h-3 w-3" />
-            </button>
-          </span>
-                );
-            })}
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm">
-                        + {placeholder}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0 w-[200px]">
-                    <Command shouldFilter={false}>
-                        <CommandInput
-                            placeholder="Search..."
-                            value={search}
-                            onValueChange={setSearch}
-                        />
-                        <CommandList>
-                            <CommandEmpty>
-                                <Button
-                                    variant="ghost"
-                                    className="w-full justify-start"
-                                    onClick={() => {
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+                <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="w-full justify-between"
+                >
+                    {selectedLabel || placeholder}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50"/>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-[260px]">
+                <Command shouldFilter={false}>
+                    <CommandInput
+                        placeholder="Suchen..."
+                        value={search}
+                        onValueChange={setSearch}
+                    />
+                    <CommandList>
+                        {filtered.length > 0 && (
+                            <CommandGroup>
+                                {filtered.map((o) => (
+                                    <CommandItem
+                                        key={o.value}
+                                        onSelect={() => {
+                                            onChange(o.value);
+                                            setOpen(false);
+                                        }}
+                                    >
+                                        <Check
+                                            className={`mr-2 h-4 w-4 ${
+                                                value === o.value ? "opacity-100" : "opacity-0"
+                                            }`}
+                                        />
+                                        {o.label}
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                        )}
+
+                        {allowCreate && filtered.length === 0 && search.length > 0 && (
+                            <CommandGroup>
+                                <CommandItem
+                                    key="__create__"
+                                    onSelect={() => {
+                                        if (!onCreate) return;
                                         onCreate(search);
-                                        onChange([...values, search]);
+                                        onChange(search);
                                         setOpen(false);
                                         setSearch("");
                                     }}
                                 >
                                     <Plus className="mr-2 h-4 w-4" />
-                                    Create "{search}"
-                                </Button>
-                            </CommandEmpty>
-                            <CommandGroup>
-                                {filtered.map(o => (
-                                    <CommandItem
-                                        key={o.value}
-                                        onSelect={() => {
-                                            onChange([...values, o.value]);
-                                            setOpen(false);
-                                        }}
-                                    >
-                                        {o.label}
-                                    </CommandItem>
-                                ))}
+                                    "{search}" erstellen
+                                </CommandItem>
                             </CommandGroup>
-                        </CommandList>
-                    </Command>
-                </PopoverContent>
-            </Popover>
-        </div>
+                        )}
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
     );
 }

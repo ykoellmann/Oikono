@@ -35,6 +35,10 @@ internal class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResul
 
         user = (await _userRepository.GetByIdAsync(user.Id, ct, Specifications.User.IncludeAuthorization))!;
 
+        // NEU: Check auf Aktivität
+        if (!user.Active)
+            return Errors.Authentication.AccountNotActive;
+
         var token = _jwtTokenProvider.GenerateToken(user);
         var newRefreshToken =
             await _refreshTokenRepository.AddAsync(new RefreshToken(user.Id), user.Id, ct);

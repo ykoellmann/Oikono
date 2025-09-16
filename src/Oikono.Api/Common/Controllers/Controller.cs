@@ -7,7 +7,6 @@ using Oikono.Domain.Models;
 
 namespace Oikono.Api.Common.Controllers;
 
-[AllowAnonymous]
 public class Controller<TIRepository, TEntity, TId, TRequest, TResponse> : ApiController
     where TId : Id<TId>, new()
     where TEntity : Entity<TId>

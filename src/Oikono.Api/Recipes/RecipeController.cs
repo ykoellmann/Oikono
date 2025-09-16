@@ -6,6 +6,7 @@ using Oikono.Api.Common.Controllers;
 using Oikono.Api.Recipes.Request;
 using Oikono.Application.Recipes.Queries.Get;
 using Oikono.Application.Recipes.Queries.GetById;
+using Oikono.Domain.Recipes;
 
 namespace Oikono.Api.Recipes;
 
@@ -23,7 +24,7 @@ public class RecipeController : ApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAsync([FromQuery] RecipeRequest request)
+    public async Task<IActionResult> GetAsync([FromQuery] GetRecipesRequest request)
     {
         var query = _mapper.Map<GetRecipesQuery>(request);
         
@@ -40,5 +41,20 @@ public class RecipeController : ApiController
         var query = new GetRecipeQuery(id);
         var result = await _mediator.Send(query);
         return result.Match(Ok, Problem);
+    }
+
+    [HttpGet("units")]
+    public IActionResult GetUnits()
+    {
+        var units = Enum.GetValues(typeof(UnitType))
+            .Cast<UnitType>()
+            .Select(u => new
+            {
+                label = u.ToString(), // oder ein schönerer Text
+                value = (int)u        // enum-Wert als Zahl
+            })
+            .ToList();
+
+        return Ok(units);
     }
 }

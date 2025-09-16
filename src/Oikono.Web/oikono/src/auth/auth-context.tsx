@@ -11,10 +11,20 @@ export type User = {
 };
 
 export type AuthResponse = {
-    accessToken: string;
-    refreshToken?: { token: string; expires: string };
-    user?: User;
+    token: string;
 };
+
+function getCookie(name: string): string | undefined {
+    const cookies = document.cookie ? document.cookie.split(";") : [];
+    const prefix = name + "=";
+    for (let c of cookies) {
+        c = c.trim();
+        if (c.startsWith(prefix)) {
+            return decodeURIComponent(c.substring(prefix.length));
+        }
+    }
+    return undefined;
+}
 
 type AuthContextValue = {
     user: User | null;
@@ -36,13 +46,14 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
         const bootstrap = async () => {
             try {
                 const data = await api.post<AuthResponse>("/authentication/token/refresh");
-                if (data?.accessToken) {
-                    localStorage.setItem("access_token", data.accessToken);
-                    api.setAuthToken(data.accessToken);
-                    if (data?.refreshToken?.token) {
-                        localStorage.setItem("refresh_token", data.refreshToken.token);
+                if (data?.token) {
+                    localStorage.setItem("access_token", data.token);
+                    api.setAuthToken(data.token);
+                    // refreshToken kommt jetzt als Cookie namens "refreshToken"
+                    const rt = getCookie("refreshToken");
+                    if (rt) {
+                        localStorage.setItem("refresh_token", rt);
                     }
-                    if (data?.user) setUser(data.user);
                 }
             } catch {
                 // ignore
@@ -56,13 +67,13 @@ export function AuthProvider({children}: { children: React.ReactNode }) {
     const authenticate = useCallback(async (endpoint: string, payload: object, redirectTo?: string) => {
         const data = await api.post<AuthResponse>(endpoint, payload, {headers: {"X-Request-Id": uuidv4()}});
 
-        localStorage.setItem("access_token", data.accessToken);
-        api.setAuthToken(data.accessToken);
-        if (data?.refreshToken?.token) {
-            localStorage.setItem("refresh_token", data.refreshToken.token);
+        localStorage.setItem("access_token", data.token);
+        api.setAuthToken(data.token);
+        // refreshToken kommt jetzt als Cookie namens "refreshToken"
+        const rt = getCookie("refreshToken");
+        if (rt) {
+            localStorage.setItem("refresh_token", rt);
         }
-
-        if (data?.user) setUser(data.user);
 
         // Weiterleitung nach Login/Register
         window.location.href = redirectTo || "/";

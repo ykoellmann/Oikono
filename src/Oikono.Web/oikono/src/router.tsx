@@ -5,7 +5,7 @@ import NotFoundPage from "@/pages/not-found";
 import RecipeDetailPage from "@/pages/recipes/detail";
 import LoginPage from "@/pages/auth/login";
 import RegisterPage from "@/pages/auth/register";
-import ProtectedRoute from "@/auth/ProtectedRoute";
+import ProtectedRoute from "@/auth/protected-route.tsx";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },

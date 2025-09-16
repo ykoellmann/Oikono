@@ -19,16 +19,35 @@ public class RefreshTokenRepository : Repository<RefreshToken, RefreshTokenId>,
     public override async Task<RefreshToken> AddAsync(RefreshToken entity, UserId userId,
         CancellationToken ct)
     {
+        
+        await using var tx = await _dbContext.Database.BeginTransactionAsync(ct);
+
+        // Sperrt alle aktiven Tokens für diesen User
         var refreshTokens = await _dbContext.RefreshTokens
             .Where(rt => rt.UserId == userId && !rt.Disabled)
+            .Where(rt => rt.Token != entity.Token)
             .ToListAsync(ct);
+
+        // Neues Token einfügen
+        var result = await base.AddAsync(entity, userId, ct);
 
         refreshTokens.ForEach(rt =>
         {
             rt.Disabled = true;
-            entity.AddDomainEvent(new ClearCacheEvent<RefreshToken, RefreshTokenId>(rt));
+            entity.AddDomainEvent(new ClearCacheEvent<RefreshToken?, RefreshTokenId>(rt));
         });
 
-        return await base.AddAsync(entity, userId, ct);
+        await _dbContext.SaveChangesAsync(ct);
+        await tx.CommitAsync(ct);
+
+        return result;
+    }
+
+    public async Task<RefreshToken?> GetByTokenAsync(string refreshToken, CancellationToken ct)
+    {
+        return await _dbContext.RefreshTokens
+            .Where(rt => rt.Token == refreshToken && !rt.Disabled)
+            .SingleOrDefaultAsync();
+        
     }
 }
