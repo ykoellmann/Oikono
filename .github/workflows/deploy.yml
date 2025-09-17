@@ -52,5 +52,5 @@ jobs:
       # Deploy auf Pi
       - name: Start containers
         run: |
-          docker-compose -f docker-compose.api.yml up -d --build --no-pull
-          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d --build --no-pull
+          docker-compose -f docker-compose.api.yml up -d --build
+          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d --build
