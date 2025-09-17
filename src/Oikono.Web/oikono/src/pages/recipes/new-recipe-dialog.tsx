@@ -169,7 +169,9 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
     setPreviews(prev => {
       const next = prev.slice();
       // Revoke the object URL to avoid memory leaks
-      try { URL.revokeObjectURL(next[index]); } catch {}
+      try { URL.revokeObjectURL(next[index]); } catch {
+        // ignore revoke errors
+      }
       next.splice(index, 1);
       return next;
     });
@@ -201,24 +203,30 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
         </div>
         <div className="flex flex-col gap-2">
           {ingArray.fields.map((ing, iIdx) => (
-            <div key={ing.id} className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-center">
-              <SelectBoxWithCreate<string>
-                options={ingredientOptions}
-                value={(form.watch(`parts.${pIdx}.ingredients.${iIdx}.ingredientId` as const) as unknown as string) ?? null}
-                onChange={(v) => form.setValue(`parts.${pIdx}.ingredients.${iIdx}.ingredientId` as const, (v ?? ""))}
-                onCreate={onCreateIngredient}
-                placeholder="Zutat wählen"
-              />
-              <Input type="number" step="0.01" className="w-28" placeholder="Menge"
-                     {...form.register(`parts.${pIdx}.ingredients.${iIdx}.amount` as const, { valueAsNumber: true })} />
-              <SelectBoxWithCreate<number>
-                options={unitOptions}
-                value={(form.watch(`parts.${pIdx}.ingredients.${iIdx}.unit` as const) as unknown as number) ?? null}
-                onChange={(v) => form.setValue(`parts.${pIdx}.ingredients.${iIdx}.unit` as const, (v as number) ?? (undefined as unknown as number))}
-                allowCreate={false}
-                placeholder="Einheit"
-              />
-              <Button type="button" variant="ghost" size="icon" onClick={() => ingArray.remove(iIdx)}>
+            <div key={ing.id} className="flex items-stretch gap-2">
+              <div className="flex-1 border rounded-md bg-card p-2 sm:p-2">
+                <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 items-center">
+                  <SelectBoxWithCreate<string>
+                    options={ingredientOptions}
+                    value={(form.watch(`parts.${pIdx}.ingredients.${iIdx}.ingredientId` as const) as unknown as string) ?? null}
+                    onChange={(v) => form.setValue(`parts.${pIdx}.ingredients.${iIdx}.ingredientId` as const, (v ?? ""))}
+                    onCreate={onCreateIngredient}
+                    placeholder="Zutat wählen"
+                  />
+                  <div className="grid grid-cols-[auto_auto] gap-2 sm:contents">
+                    <Input type="number" step="0.01" className="w-24" placeholder="Menge"
+                           {...form.register(`parts.${pIdx}.ingredients.${iIdx}.amount` as const, { valueAsNumber: true })} />
+                    <SelectBoxWithCreate<number>
+                      options={unitOptions}
+                      value={(form.watch(`parts.${pIdx}.ingredients.${iIdx}.unit` as const) as unknown as number) ?? null}
+                      onChange={(v) => form.setValue(`parts.${pIdx}.ingredients.${iIdx}.unit` as const, (v as number) ?? (undefined as unknown as number))}
+                      allowCreate={false}
+                      placeholder="Einheit"
+                    />
+                  </div>
+                </div>
+              </div>
+              <Button type="button" aria-label="Zutat entfernen" title="Zutat entfernen" className="self-stretch" variant="ghost" size="icon" onClick={() => ingArray.remove(iIdx)}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
@@ -298,7 +306,7 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
             values={form.watch("tagIds") ?? []}
             onChange={(vals) => form.setValue("tagIds", vals)}
             onCreate={onCreateTag}
-            placeholder="Tag auswählen oder erstellen"
+            placeholder="Tag auswählen"
           />
         </section>
       </div>
@@ -310,7 +318,7 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
           values={form.watch("sideDishIds") ?? []}
           onChange={(vals) => form.setValue("sideDishIds", vals)}
           onCreate={onCreateSideDish}
-          placeholder="Beilage auswählen oder erstellen"
+          placeholder="Beilage auswählen"
         />
       </section>
 
