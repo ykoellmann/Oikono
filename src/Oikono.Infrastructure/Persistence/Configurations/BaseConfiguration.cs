@@ -13,6 +13,7 @@ public abstract class BaseConfiguration<TEntity, TId> : IEntityTypeConfiguration
     {
         builder.Property(e => e.Id)
             .HasColumnOrder(0)
+            .HasDefaultValueSql("NEWSEQUENTIALID()")
             .HasConversion(id => id.Value,
                 value => new TId { Value = value })
             .IsRequired();

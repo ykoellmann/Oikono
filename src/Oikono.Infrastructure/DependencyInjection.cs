@@ -39,6 +39,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddScoped<PublishDomainEventsInterceptor>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddDbContext<OikonoDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DbConnection")));

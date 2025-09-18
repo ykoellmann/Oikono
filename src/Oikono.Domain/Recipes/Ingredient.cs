@@ -12,6 +12,6 @@ public class Ingredient : Entity<IngredientId>
 
     public string Name { get; private set; } = null!;
     
-    private readonly List<Part> _parts = new();
-    public IReadOnlyList<Part> Parts => _parts.AsReadOnly();
+    private readonly List<PartIngredient> _parts = new();
+    public IReadOnlyList<PartIngredient> Parts => _parts.AsReadOnly();
 }

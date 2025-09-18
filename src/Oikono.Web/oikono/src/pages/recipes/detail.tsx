@@ -179,7 +179,7 @@ export default function RecipeDetailPage() {
                         <TabsContent value="gesamt">
                             <IngredientPartCard
                                 name={null}
-                                ingredients={mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients) ?? recipe.ingredients))}/>
+                                ingredients={mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients)))}/>
                         </TabsContent>
                         <TabsContent value="komponenten">
                             <div className="space-y-3">
@@ -215,7 +215,7 @@ export default function RecipeDetailPage() {
                                     </TabsList>
                                     <TabsContent value="gesamt">
                                         <ul className="list-disc pl-5 space-y-1">
-                                            {mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients) ?? recipe.ingredients)).map((ing, i) => (
+                                            {mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients))).map((ing, i) => (
                                                 <li key={`c-${ing.name}-${ing.unit}-${i}`}>{ing.amount} {ing.unit} {ing.name}</li>
                                             ))}
                                         </ul>
@@ -259,7 +259,7 @@ export default function RecipeDetailPage() {
                                     </TabsList>
                                     <TabsContent value="gesamt">
                                         <ul className="list-disc pl-5 space-y-1">
-                                            {mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients) ?? recipe.ingredients)).map((ing, i) => (
+                                            {mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients))).map((ing, i) => (
                                                 <li key={`m-${ing.name}-${ing.unit}-${i}`}>{ing.amount} {ing.unit} {ing.name}</li>
                                             ))}
                                         </ul>

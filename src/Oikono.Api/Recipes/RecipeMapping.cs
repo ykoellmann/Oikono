@@ -1,6 +1,7 @@
 using Mapster;
 using Oikono.Api.Recipes.Request;
 using Oikono.Application.Common.Pagination;
+using Oikono.Application.Recipes.Commands;
 using Oikono.Application.Recipes.Common;
 using Oikono.Application.Recipes.Queries.Get;
 using Oikono.Domain.Recipes;
@@ -13,6 +14,8 @@ public class RecipeMapping : IRegister
     {
         config.NewConfig<GetRecipesRequest, GetRecipesQuery>()
             .MapToConstructor(true);
+        
+        config.NewConfig<CreateRecipeRequest, CreateRecipeCommand>();
         
         config.NewConfig(typeof(PagedResult<>), typeof(PagedResult<>))
             .Map("Items", "Items")

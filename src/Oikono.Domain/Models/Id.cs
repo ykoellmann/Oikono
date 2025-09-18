@@ -1,7 +1,7 @@
 namespace Oikono.Domain.Models;
 
 public class Id<TIdObject> : ValueObject
-    where TIdObject : Id<TIdObject>
+    where TIdObject : Id<TIdObject>, new()
 {
     public Id(Guid value)
     {
@@ -27,7 +27,12 @@ public class Id<TIdObject> : ValueObject
 
     public static implicit operator Id<TIdObject>(Guid value)
     {
-        return new Id<TIdObject>(value);
+        var t = new TIdObject
+        {
+            Value = value
+        };
+
+        return t;
     }
 
     public override string ToString()

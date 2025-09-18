@@ -18,10 +18,7 @@ public class PartConfiguration : BaseConfiguration<Part, PartId>
             .HasForeignKey(p => p.RecipeId);
 
         builder.HasMany(p => p.Ingredients)
-            .WithMany()
-            .UsingEntity<PartIngredient>(
-                r => r.HasOne(p => p.Ingredient).WithMany().HasForeignKey(p => p.IngredientId),
-                r => r.HasOne(p => p.Part).WithMany().HasForeignKey(p => p.PartId)
-            );
+            .WithOne(i => i.Part)
+            .HasForeignKey(i => i.PartId);
     }
 }

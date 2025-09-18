@@ -33,7 +33,7 @@ public class RegisterCommandHandlerTests
 
         var commandHandler = new RefreshTokenCommandHandler(_refreshTokenRepository.Object, _userRepository.Object,
             _jwtTokenProvider.Object);
-        var command = new RefreshTokenCommand("token", userId);
+        var command = new RefreshTokenCommand("token");
 
         // Act
         var result = await commandHandler.Handle(command, new CancellationToken());
@@ -57,7 +57,7 @@ public class RegisterCommandHandlerTests
 
         var commandHandler = new RefreshTokenCommandHandler(_refreshTokenRepository.Object, _userRepository.Object,
             _jwtTokenProvider.Object);
-        var command = new RefreshTokenCommand("token", mockUserId);
+        var command = new RefreshTokenCommand("token");
 
         // Act
         var result = await commandHandler.Handle(command, CancellationToken.None);
@@ -85,7 +85,7 @@ public class RegisterCommandHandlerTests
 
         var commandHandler = new RefreshTokenCommandHandler(_refreshTokenRepository.Object, _userRepository.Object,
             _jwtTokenProvider.Object);
-        var command = new RefreshTokenCommand(refreshToken.Token, userId);
+        var command = new RefreshTokenCommand(refreshToken.Token);
 
         // Act
         var result = await commandHandler.Handle(command, CancellationToken.None);

@@ -14,10 +14,12 @@ public class Recipe : AggregateRoot<RecipeId>
     private readonly List<Tag> _tags = [];
     private readonly List<SideDish> _sideDishes = [];
 
-    public Recipe(string name, int portions)
+    public Recipe(string name, int portions,  int? calories, int? rating)
     {
         Name = name;
         Portions = portions;
+        Calories = calories;
+        Rating = rating;
     }
 
     public string Name { get; private set; }
@@ -39,4 +41,30 @@ public class Recipe : AggregateRoot<RecipeId>
 
     // Beilagen
     public IReadOnlyList<SideDish> SideDishes => _sideDishes.AsReadOnly();
+
+    public void AddSideDish(SideDish sideDish)
+    {
+        if (!_sideDishes.Any(sd => sd.Id == sideDish.Id))
+            _sideDishes.Add(sideDish);
+    }
+
+    public void AddPart(Part part)
+    {
+        _parts.Add(part);
+    }
+
+    public void AddStep(Step step)
+    {
+        _steps.Add(step);
+    }
+
+    public void AddImage(Asset image)
+    {
+        _images.Add(image);
+    }
+
+    public void AddTag(Tag tag)
+    {
+        _tags.Add(tag);
+    }
 }

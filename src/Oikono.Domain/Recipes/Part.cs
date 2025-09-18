@@ -5,7 +5,7 @@ namespace Oikono.Domain.Recipes;
 
 public class Part : Entity<PartId>
 {
-    private readonly List<Ingredient> _ingredients = [];
+    private readonly List<PartIngredient> _ingredients = [];
 
     public Part(RecipeId recipeId, string name)
     {
@@ -17,5 +17,10 @@ public class Part : Entity<PartId>
     public Recipe Recipe { get; private set; } = null!;
     public string Name { get; private set; }
 
-    public IReadOnlyList<Ingredient> Ingredients => _ingredients.AsReadOnly();
+    public IReadOnlyList<PartIngredient> Ingredients => _ingredients.AsReadOnly();
+
+    public void AddIngredient(PartIngredient ingredient)
+    {
+        _ingredients.Add(ingredient);
+    }
 }

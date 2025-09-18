@@ -15,12 +15,8 @@ public class IngredientConfiguration : BaseConfiguration<Ingredient, IngredientI
         builder.HasIndex(i => i.Name)
             .IsUnique();
         
-        
         builder.HasMany(p => p.Parts)
-            .WithMany()
-            .UsingEntity<PartIngredient>(
-                r => r.HasOne(p => p.Part).WithMany().HasForeignKey(p => p.PartId),
-                r => r.HasOne(p => p.Ingredient).WithMany().HasForeignKey(p => p.IngredientId)
-            );
+            .WithOne(p => p.Ingredient)
+            .HasForeignKey(p => p.IngredientId);
     }
 }

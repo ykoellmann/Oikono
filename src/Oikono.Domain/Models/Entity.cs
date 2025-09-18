@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Oikono.Domain.Users;
 using Oikono.Domain.Users.ValueObjects;
@@ -11,10 +12,11 @@ public class Entity<TId> : IEquatable<Entity<TId>>, IHasDomainEvents
 
     protected Entity()
     {
-        Id = new TId();
     }
 
 
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column(Order = 0)] public TId Id { get; protected set; }
 
     [Column(Order = 9996)] public virtual UserId CreatedBy { get; set; } = null!;

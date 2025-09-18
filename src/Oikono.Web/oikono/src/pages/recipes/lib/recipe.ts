@@ -41,8 +41,7 @@ export type Recipe = {
     id: string
     name: string
     images: string[]          // mehrere Bilder
-    ingredients: Ingredient[]
-    parts?: IngredientPart[]  // optionale Gruppen von Zutaten (z. B. Teig, Füllung, Crumble)
+    parts: IngredientPart[]  // optionale Gruppen von Zutaten (z. B. Teig, Füllung, Crumble)
     steps: RecipeStep[]
     tags: string[]            // z. B. ["vegan", "schnell"]
 

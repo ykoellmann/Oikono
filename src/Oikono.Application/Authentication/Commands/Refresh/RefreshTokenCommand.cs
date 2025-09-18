@@ -4,4 +4,4 @@ using Oikono.Domain.Users.ValueObjects;
 
 namespace Oikono.Application.Authentication.Commands.Refresh;
 
-public record RefreshTokenCommand(string TokenToRefresh, UserId UserId) : ICommand<AuthenticationResult>;
+public record RefreshTokenCommand(string TokenToRefresh) : ICommand<AuthenticationResult>;

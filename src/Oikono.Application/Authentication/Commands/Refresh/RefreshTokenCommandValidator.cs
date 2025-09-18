@@ -6,9 +6,6 @@ internal class RefreshTokenCommandValidator : AbstractValidator<RefreshTokenComm
 {
     public RefreshTokenCommandValidator()
     {
-        RuleFor(x => x.UserId)
-            .NotEmpty();
-
         RuleFor(x => x.TokenToRefresh)
             .NotEmpty();
     }

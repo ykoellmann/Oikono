@@ -15,7 +15,7 @@ services:
       - ConnectionStrings__DbConnection=User Id=postgres;Password=postgres;Server=pi.local;Port=8002;Database=postgres;Integrated Security=true;Pooling=true;
       - ConnectionStrings__Redis=pi.local:8003
       - JwtSettings__Secret=0ba697edfae041c1c756547c88f737db379231f94cf1f89092698877d87e54a2
-      - JwtSettings__ExpiryMinutes=10
+      - JwtSettings__ExpiryMinutes=2
       - JwtSettings__Issuer=Oikono
       - JwtSettings__Audience=Oikono  
       - Serilog__MinimumLevel__Override__Microsoft=Warning

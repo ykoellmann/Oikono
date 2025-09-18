@@ -1,9 +1,9 @@
 using MapsterMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Oikono.Api.Common.Controllers;
 using Oikono.Api.Recipes.Request;
+using Oikono.Application.Recipes.Commands;
 using Oikono.Application.Recipes.Queries.Get;
 using Oikono.Application.Recipes.Queries.GetById;
 using Oikono.Domain.Recipes;
@@ -11,7 +11,6 @@ using Oikono.Domain.Recipes;
 namespace Oikono.Api.Recipes;
 
 [Route("api/recipes")]
-[AllowAnonymous]
 public class RecipeController : ApiController
 {
     private readonly IMapper _mapper;
@@ -40,6 +39,17 @@ public class RecipeController : ApiController
     {
         var query = new GetRecipeQuery(id);
         var result = await _mediator.Send(query);
+        return result.Match(Ok, Problem);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PostAsync([FromBody] CreateRecipeRequest request)
+    {
+        var command = _mapper.Map<CreateRecipeCommand>(request);
+        command.UserId = UserId;
+        
+        var result = await _mediator.Send(command);
+
         return result.Match(Ok, Problem);
     }
 

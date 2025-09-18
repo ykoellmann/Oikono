@@ -69,7 +69,7 @@ public class AuthenticationController : ApiController
         if (string.IsNullOrEmpty(tokenToRefresh))
             return Problem(Errors.Authentication.InvalidRefreshToken);
 
-        var authResult = await _mediator.Send(new RefreshTokenCommand(tokenToRefresh, UserId));
+        var authResult = await _mediator.Send(new RefreshTokenCommand(tokenToRefresh));
 
         return authResult.Match(
             SetRefreshToken,
@@ -89,14 +89,5 @@ public class AuthenticationController : ApiController
         Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
 
         return Ok(_mapper.Map<AuthenticationResponse>(authResult));
-    }
-
-    [HttpGet("test")]
-    [AllowAnonymous]
-    public IActionResult Test(CancellationToken ct)
-    {
-        _backgroundJobClient.Enqueue((ISender sender) =>
-            sender.Send(new RefreshTokenCommand("", new UserId()), new CancellationToken()));
-        return Ok("Test");
     }
 }
