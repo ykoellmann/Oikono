@@ -1,6 +1,9 @@
 networks:
   oikono:
     name: oikono
+  backend:
+    name: backend
+    external: true
 
 services:
   oikono:
@@ -10,21 +13,16 @@ services:
       context: .
       dockerfile: src/Oikono/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:80
-      - ConnectionStrings__DefaultConnection=Host=pi.local;Port=8002;Database=oikono;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=oikono;Username=postgres;Password=postgres
       - Jwt__Key=ThisIsAVerySecureKeyForTesting123456789012345678901234567890
       - Jwt__Issuer=Oikono
       - Jwt__Audience=OikonoUsers
-      - Serilog__WriteTo__1__Args__serverUrl=http://pi.local:5341
+      - Serilog__WriteTo__1__Args__serverUrl=http://seq:5341
     ports:
       - 8100:80
     networks:
       - oikono
+      - backend
     restart: unless-stopped
-
-volumes:
-  appdata:
-    driver: local
-  logdata:
-    driver: local

@@ -1,4 +1,4 @@
-﻿networks:
+networks:
   oikono:
     name: oikono
 
@@ -14,7 +14,7 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 8002:5432
     networks:
       - oikono
     healthcheck:
@@ -37,19 +37,19 @@ services:
     volumes:
       - seqdata:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5341/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5341/health"]
       interval: 30s
       timeout: 10s
       retries: 3
 
   oikono:
     container_name: oikono
-    image: oikono:local
+    image: oikono:latest
     build:
       context: .
       dockerfile: src/Oikono/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:80
       - ConnectionStrings__DefaultConnection=Host=oikono.db;Port=5432;Database=oikono;Username=postgres;Password=postgres
       - Jwt__Key=ThisIsAVerySecureKeyForTesting123456789012345678901234567890
@@ -70,5 +70,13 @@ services:
 volumes:
   dbdata:
     driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$./data/oikono/db'
   seqdata:
     driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '$./data/oikono/seq'
