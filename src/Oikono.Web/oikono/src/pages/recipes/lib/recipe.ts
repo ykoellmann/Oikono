@@ -1,7 +1,17 @@
-export type Ingredient = {
+export type IngredientRef = {
+    id: string
     name: string
+}
+export type PartIngredient = {
+    ingredient: IngredientRef
     amount: number
     unit: string
+}
+
+export type MergedIngredient = {
+    name: string
+    unit: string
+    amount: number
 }
 
 /**
@@ -9,10 +19,10 @@ export type Ingredient = {
  * - Case-insensitive, trims whitespace
  * - Only sums if unit string matches (after trim, case-insensitive)
  */
-export function mergeAndSumIngredients(ings: Ingredient[]): Ingredient[] {
-    const map = new Map<string, Ingredient>();
+export function mergeAndSumIngredients(ings?: PartIngredient[] | null): MergedIngredient[] {
+    const map = new Map<string, MergedIngredient>();
     for (const ing of ings ?? []) {
-        const name = (ing.name ?? "").trim();
+        const name = (ing.ingredient?.name ?? "").trim();
         const unit = (ing.unit ?? "").trim();
         const key = `${name.toLowerCase()}__${unit.toLowerCase()}`;
         const prev = map.get(key);
@@ -25,28 +35,50 @@ export function mergeAndSumIngredients(ings: Ingredient[]): Ingredient[] {
     return Array.from(map.values());
 }
 
+export type Device = {
+    id: string
+    name: string
+}
+
 export type RecipeStep = {
-    step: string
+    description: string
     duration?: number         // Minuten
-    device?: "oven" | "stove" | "mixer" | string
+    device?: Device
     temperature?: number      // °C, falls relevant
 }
 
 export type IngredientPart = {
     name: string | null
-    ingredients: Ingredient[]
+    ingredients: PartIngredient[]
+}
+
+export type Asset = {
+    id: string,
+    fileName: string,
+    contentType: string,
+    data: string, // base64
+}
+
+export type SideDish = {
+    id: string
+    name: string
+}
+
+export type Tag = {
+    id: string
+    name: string
 }
 
 export type Recipe = {
     id: string
     name: string
-    images: string[]          // mehrere Bilder
+    images: Asset[]          // mehrere Bilder
     parts: IngredientPart[]  // optionale Gruppen von Zutaten (z. B. Teig, Füllung, Crumble)
     steps: RecipeStep[]
-    tags: string[]            // z. B. ["vegan", "schnell"]
+    tags: Tag[]            // z. B. ["vegan", "schnell"]
 
     portions: number          // Pflichtfeld
     calories?: number         // optional, kcal pro Portion
-    sideDishes?: string[]     // optional, z. B. ["Reis", "Salat"]
+    sideDishes?: SideDish[]     // optional, z. B. ["Reis", "Salat"]
     rating?: number           // ganzzahlig 0-5
 }

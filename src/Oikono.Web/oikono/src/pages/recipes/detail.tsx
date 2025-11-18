@@ -23,6 +23,14 @@ import {IngredientPartCard} from "@/pages/recipes/ingredient-part-card.tsx";
 
 // Load recipe from API via RecipeService
 import { RecipeService } from "@/pages/recipes/lib/recipeService";
+import type { Asset } from "@/pages/recipes/lib/recipe";
+import placeholder from "@/assets/placeholder.png";
+
+function getAssetDataUrl(asset: Asset): string {
+    const ct = asset?.contentType || "image/jpeg";
+    const data = asset?.data || "";
+    return `data:${ct};base64,${data}`;
+}
 
 export default function RecipeDetailPage() {
     const {id} = useParams();
@@ -87,7 +95,6 @@ export default function RecipeDetailPage() {
         );
     }
 
-    // @ts-ignore
     return (
         <PageLayout title={recipe.name}>
             {/* Rating with utensils (integer only) */}
@@ -106,48 +113,64 @@ export default function RecipeDetailPage() {
 
             {/* Top section: image left, info right on large; stacked on small */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                {/* Image gallery - Carousel 07 pattern */}
-                {recipe.images && recipe.images.length > 0 && (
-                    <div className="lg:col-span-2 w-full py-2">
-                        <Carousel className="w-full" setApi={setCarouselApi}>
-                            <CarouselContent>
-                                {recipe.images.map((src, index) => (
-                                    <CarouselItem key={index}>
-                                        <div
-                                            className="relative w-full overflow-hidden rounded-md h-48 sm:h-56 md:h-[50vh] lg:h-[50vh] max-h-[640px]">
-                                            <img
-                                                src={src}
-                                                alt={`${recipe.name} ${index + 1}`}
-                                                className="absolute inset-0 h-full w-full object-cover"
-                                            />
-                                        </div>
-                                    </CarouselItem>
+                {/* Image gallery - Carousel with fallback */}
+                <div className="lg:col-span-2 w-full py-2">
+                    {recipe.images && recipe.images.length > 0 ? (
+                        <>
+                            <Carousel className="w-full" setApi={setCarouselApi}>
+                                <CarouselContent>
+                                    {recipe.images.map((asset, index) => (
+                                        <CarouselItem key={index}>
+                                            <div
+                                                className="relative w-full overflow-hidden rounded-md h-48 sm:h-56 md:h-[50vh] lg:h-[50vh] max-h-[640px]">
+                                                <img
+                                                    src={getAssetDataUrl(asset)}
+                                                    alt={`${recipe.name} ${index + 1}`}
+                                                    className="absolute inset-0 h-full w-full object-cover"
+                                                />
+                                            </div>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="top-[calc(100%+0.5rem)] translate-y-0 left-0"/>
+                                <CarouselNext className="top-[calc(100%+0.5rem)] translate-y-0 left-2 translate-x-full"/>
+                            </Carousel>
+                            <div className="mt-4 flex items-center justify-end gap-2">
+                                {Array.from({length: slideCount}).map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => carouselApi?.scrollTo(index)}
+                                        className={cn("h-3.5 w-3.5 rounded-full border-2", {
+                                            "border-primary": currentSlide === index + 1,
+                                        })}
+                                    />
                                 ))}
-                            </CarouselContent>
-                            <CarouselPrevious className="top-[calc(100%+0.5rem)] translate-y-0 left-0"/>
-                            <CarouselNext className="top-[calc(100%+0.5rem)] translate-y-0 left-2 translate-x-full"/>
-                        </Carousel>
-                        <div className="mt-4 flex items-center justify-end gap-2">
-                            {Array.from({length: slideCount}).map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => carouselApi?.scrollTo(index)}
-                                    className={cn("h-3.5 w-3.5 rounded-full border-2", {
-                                        "border-primary": currentSlide === index + 1,
-                                    })}
-                                />
-                            ))}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="relative w-full overflow-hidden rounded-md h-48 sm:h-56 md:h-[50vh] lg:h-[50vh] max-h-[640px]">
+                            <img
+                                src={placeholder}
+                                alt={`${recipe.name} placeholder`}
+                                className="absolute inset-0 h-full w-full object-cover"
+                            />
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {/* Right: Info moved next to image */}
                 <div className="lg:col-span-1 space-y-3">
                     {/* Tags Editor */}
                     <TagsEditor
                         recipeId={recipe.id}
-                        value={recipe.tags}
-                        onChange={(next) => setRecipe({ ...recipe, tags: next })}
+                        value={(recipe.tags ?? []).map(t => t.name)}
+                        onChange={(next) => setRecipe({
+                            ...recipe,
+                            tags: next.map(n => {
+                                const existing = recipe.tags?.find(t => t.name === n);
+                                return existing ?? { id: crypto.randomUUID(), name: n };
+                            })
+                        })}
                     />
                     <div className="text-sm text-muted-foreground grid grid-cols-2 gap-2">
                         <div>Portionen: <span className="font-medium text-foreground">{recipe.portions}</span></div>
@@ -156,7 +179,7 @@ export default function RecipeDetailPage() {
                             </div>
                         )}
                         {recipe.sideDishes && recipe.sideDishes.length > 0 && (
-                            <div className="col-span-2">Beilagen: {recipe.sideDishes.join(", ")}</div>
+                            <div className="col-span-2">Beilagen: {recipe.sideDishes.map(s => s.name).join(", ")}</div>
                         )}
                     </div>
                 </div>
@@ -177,9 +200,11 @@ export default function RecipeDetailPage() {
                             )}
                         </TabsList>
                         <TabsContent value="gesamt">
-                            <IngredientPartCard
-                                name={null}
-                                ingredients={mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients)))}/>
+                            <ul className="list-disc pl-5 space-y-1">
+                                {mergeAndSumIngredients((recipe.parts?.flatMap(p => p.ingredients))).map((ing, i) => (
+                                    <li key={`t-${ing.name}-${ing.unit}-${i}`}>{ing.amount} {ing.unit} {ing.name}</li>
+                                ))}
+                            </ul>
                         </TabsContent>
                         <TabsContent value="komponenten">
                             <div className="space-y-3">
@@ -227,7 +252,7 @@ export default function RecipeDetailPage() {
                                                     <h4 className="font-medium mb-1">{p.name}</h4>
                                                     <ul className="list-disc pl-5 space-y-1">
                                                         {p.ingredients.map((ing, i) => (
-                                                            <li key={`c-${p.name}-${ing.name}-${ing.unit}-${i}`}>{ing.amount} {ing.unit} {ing.name}</li>
+                                                            <li key={`c-${p.name}-${ing.ingredient.name}-${ing.unit}-${i}`}>{ing.amount} {ing.unit} {ing.ingredient.name}</li>
                                                         ))}
                                                     </ul>
                                                 </div>
@@ -271,7 +296,7 @@ export default function RecipeDetailPage() {
                                                     <h4 className="font-medium mb-1">{p.name}</h4>
                                                     <ul className="list-disc pl-5 space-y-1">
                                                         {p.ingredients.map((ing, i) => (
-                                                            <li key={`m-${p.name}-${ing.name}-${ing.unit}-${i}`}>{ing.amount} {ing.unit} {ing.name}</li>
+                                                            <li key={`m-${p.name}-${ing.ingredient.name}-${ing.unit}-${i}`}>{ing.amount} {ing.unit} {ing.ingredient.name}</li>
                                                         ))}
                                                     </ul>
                                                 </div>
@@ -286,16 +311,16 @@ export default function RecipeDetailPage() {
             </div>
 
             <ol className="space-y-4">
-                {recipe.steps.map((s, i) => (
+                {recipe?.steps?.map((s, i) => (
                     <li key={i} className="p-4 rounded-md border bg-card">
                         <div className="flex items-start justify-between gap-4">
                             <div>
                                 <div className="font-medium">Schritt {i + 1}</div>
-                                <p className="text-sm mt-1">{s.step}</p>
+                                <p className="text-sm mt-1">{s.description}</p>
                             </div>
                             <div className="text-xs text-muted-foreground text-right min-w-24">
                                 {s.duration ? <div>Dauer: {s.duration} min</div> : null}
-                                {s.device ? <div>Gerät: {s.device}</div> : null}
+                                {s.device ? <div>Gerät: {s.device.name}</div> : null}
                                 {s.temperature ? <div>Temp.: {s.temperature}°C</div> : null}
                             </div>
                         </div>

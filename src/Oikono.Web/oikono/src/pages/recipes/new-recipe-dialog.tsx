@@ -17,6 +17,7 @@ import { IngredientService } from "@/api/ingredientService";
 import { UnitService } from "@/api/unitService";
 import { DeviceService } from "@/api/deviceService";
 import { SelectBoxWithCreate, type Option } from "@/components/select-box-with-create";
+import { AssetService } from "@/api/assetService";
 
 // Schema aligned to backend CreateRecipeRequest
 const IngredientRowSchema = z.object({
@@ -242,6 +243,7 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
   async function onSubmit(values: FormValues) {
     setSubmitError(null);
     try {
+      // 1) Build payload and create recipe first (without images)
       const payload = {
         name: values.name,
         portions: values.portions,
@@ -265,7 +267,14 @@ function CreateRecipeForm({ onSaved }: { onSaved?: () => void }) {
         })),
       };
 
-      await RecipeService.create(payload as unknown as object);
+      const created = await RecipeService.create(payload as unknown as object);
+
+      // 2) Upload images using the new recipeId
+      const filesToUpload = (files ?? []).filter(Boolean);
+      if (created?.id && filesToUpload.length) {
+        await AssetService.uploadManyForRecipe(filesToUpload, created.id);
+      }
+
       onSaved?.();
     } catch (e) {
       const err = e as { response?: { data?: { title?: string; errors?: Record<string, string[]> } } };

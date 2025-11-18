@@ -41,7 +41,7 @@ export default function TagsEditor({ recipeId, value, onChange, className }: Tag
       window.clearTimeout(t);
       t = window.setTimeout(async () => {
         try {
-          await RecipeService.update(recipeId, { tags });
+          await RecipeService.update(recipeId, { tags: tags.map(t => ({ id: "", name: t })) as any });
         } finally {
           setSaving(false);
         }

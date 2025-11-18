@@ -11,7 +11,7 @@ export function IngredientPartCard(part: IngredientPart) {
                 <Separator className="my-2"/>
                 {part.ingredients.map((ing) => (
                     <div>
-                        <div>{ing.amount} {ing.unit} {ing.name}</div>
+                        <div>{ing.amount} {ing.unit} {ing.ingredient.name}</div>
                         <Separator className="my-2"/>
                     </div>
                 ))}
