@@ -21,23 +21,14 @@ jobs:
       # Clean up old containers
       - name: Stop containers
         run: |
-          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml down --remove-orphans || true
-          docker-compose -f docker-compose.api.yml down --remove-orphans || true
+          docker-compose -f docker-compose.pi.yml down --remove-orphans || true
 
-      # Build API image
-      - name: Build API
+      # Build Backend image
+      - name: Build Backend
         run: |
           docker buildx build --platform linux/arm64 \
-            -f src/Oikono.Api/Dockerfile \
-            -t oikono.api:local \
-            --load .
-
-      # Build Loadbalancer image
-      - name: Build Loadbalancer
-        run: |
-          docker buildx build --platform linux/arm64 \
-            -f src/Oikono.LoadBalancer/Dockerfile \
-            -t oikono.loadbalancer:local \
+            -f src/Oikono/Dockerfile \
+            -t oikono:latest \
             --load .
 
       # Build Frontend image
@@ -45,12 +36,11 @@ jobs:
         run: |
           docker buildx build --platform linux/arm64 \
             -f src/Oikono.Web/oikono/Dockerfile \
-            -t oikono.web:local \
-            src/Oikono.Web/oikono \
-            --load
+            -t oikono.web:latest \
+            --load \
+            src/Oikono.Web/oikono
 
       # Deploy auf Pi
       - name: Start containers
         run: |
-          docker-compose -f docker-compose.api.yml up -d --build
-          docker-compose -f src/Oikono.Web/oikono/docker-compose.web.yml up -d --build
+          docker-compose -f docker-compose.pi.yml up -d

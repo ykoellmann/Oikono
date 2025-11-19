@@ -67,6 +67,18 @@ services:
         condition: service_started
     restart: unless-stopped
 
+  oikono.web:
+    container_name: oikono.web
+    image: oikono.web:local
+    build:
+      context: src/Oikono.Web/oikono
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - oikono
+    restart: unless-stopped
+
 volumes:
   dbdata:
     driver: local
