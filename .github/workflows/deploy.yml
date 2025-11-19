@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: self-hosted
     environment: production
 
@@ -17,11 +17,6 @@ jobs:
       # Buildx Setup (benötigt für --platform + --load)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      # Clean up old containers
-      - name: Stop containers
-        run: |
-          docker compose -f docker-compose.pi.yml down --remove-orphans || true
 
       # Build Backend image
       - name: Build Backend
@@ -40,7 +35,27 @@ jobs:
             --load \
             src/Oikono.Web/oikono
 
+  deploy:
+    runs-on: self-hosted
+    environment: production
+    needs: build  # Wartet bis Build fertig ist
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Clean up old containers
+      - name: Stop containers
+        run: |
+          docker compose -f docker-compose.pi.yml down --remove-orphans || true
+
       # Deploy auf Pi
       - name: Start containers
         run: |
           docker compose -f docker-compose.pi.yml up -d
+
+      # Health check
+      - name: Verify deployment
+        run: |
+          sleep 5
+          docker ps --filter "name=oikono" --format "table {{.Names}}\t{{.Status}}"
