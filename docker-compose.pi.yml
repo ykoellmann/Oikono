@@ -37,3 +37,20 @@ services:
     networks:
       - oikono
     restart: unless-stopped
+
+  caddy:
+    image: caddy:alpine
+    container_name: oikono-caddy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - oikono
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

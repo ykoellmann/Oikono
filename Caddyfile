@@ -1,0 +1,9 @@
+:80 {
+    handle /api/* {
+        reverse_proxy oikono:80
+    }
+
+    handle {
+        reverse_proxy oikono.web:3000
+    }
+}

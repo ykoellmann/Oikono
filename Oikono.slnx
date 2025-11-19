@@ -1,5 +1,6 @@
 ﻿<Solution>
   <Folder Name="/Solution Items/">
+    <File Path="Caddyfile" />
     <File Path="docker-compose.local.yml" />
     <File Path=".env" />
     <File Path="README.md" />
@@ -9,9 +10,9 @@
     <File Path="docker-compose.pi.yml" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src\Oikono\Oikono.csproj" Type="C#" />
+    <Project Path="src\Oikono\Oikono.csproj" />
   </Folder>
   <Folder Name="/test/">
-    <Project Path="test\Oikono.UnitTests\Oikono.UnitTests.csproj" Type="C#" />
+    <Project Path="test\Oikono.UnitTests\Oikono.UnitTests.csproj" />
   </Folder>
 </Solution>
