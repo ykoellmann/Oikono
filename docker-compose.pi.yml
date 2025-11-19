@@ -24,9 +24,6 @@ services:
     networks:
       - oikono
       - shared-services
-    depends_on:
-      - shared-postgres
-      - shared-seq
     restart: unless-stopped
 
   oikono.web:
